@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { connectToMongoDB } from "./src/configs/db/connectToMongoDB.js";
-import authRoutes from "./src/routes/authRoutes.js"
+import authRoutes from "./src/routes/authRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 
 dotenv.config();
@@ -21,7 +21,7 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Routes
+// Routes Declaration
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 
