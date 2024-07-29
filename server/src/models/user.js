@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema({
     required: [true, "Mobile number is required"],
     match: [/^\d{10}$/, "Please enter a valid 10-digit mobile number"],
   },
+  refreshToken: {
+    type: String,
+  }
 });
 
 userSchema.pre("save", async function (next) {

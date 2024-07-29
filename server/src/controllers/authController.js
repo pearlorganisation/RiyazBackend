@@ -1,7 +1,9 @@
 import User from "../models/user.js";
 import { COOKIE_OPTIONS } from "../../constants.js";
 
-export const signup = async (req, res) => {};
+export const signup = async (req, res) => {
+  
+};
 
 export const login = async (req, res) => {
   const { email, password } = req?.body;
