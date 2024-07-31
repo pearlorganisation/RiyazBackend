@@ -1,4 +1,4 @@
-export const DB_NAME = "Riaz_DB_NK";
+// export const DB_NAME = "Riaz_DB";
 
 export const COOKIE_OPTIONS = {
   httpOnly: true,
