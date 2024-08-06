@@ -32,3 +32,32 @@ export const refreshAccessToken = asyncHandler(async (req, res, next) => {
     .cookie("refresh_token", refresh_token, COOKIE_OPTIONS)
     .json({ access_token, refresh_token });
 });
+
+export const changePassword = asyncHandler(async (req, res, next) => {
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
+  const { email } = req.user;
+  if (!email) {
+    return next(new ApiErrorResponse("Unauthorized User", 401));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ApiErrorResponse("User not found", 401));
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(currentPassword);
+  if (!isPasswordValid) {
+    return next(new ApiErrorResponse("Wrong password", 400));
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    return next(new ApiErrorResponse("New passwords do not match", 400));
+  }
+
+  user.password = newPassword;
+  await user.save();
+  return res
+    .status(200)
+    .json({ success: true, message: "Password changed successfully" });
+});
+ 

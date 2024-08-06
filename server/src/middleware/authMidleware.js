@@ -1,10 +1,11 @@
-import User from "../models/user";
-import ApiErrorResponse from "../utils/ApiErrorResponse";
+import User from "../models/user.js";
+import ApiErrorResponse from "../utils/ApiErrorResponse.js";
 import jwt from "jsonwebtoken";
-import { asyncHandler } from "../utils/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const verifyToken = asyncHandler(async (req, res, next) => {
   const { access_token } = req.cookies;
+  console.log(`Middle - access_token : ${access_token} ---`);
   if (!access_token) {
     return next(new ApiErrorResponse("Unauthorized user!", 401));
   }

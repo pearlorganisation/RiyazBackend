@@ -2,34 +2,37 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Name is required"],
-    trim: true,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters"],
+    },
+    mobileNumber: {
+      type: String,
+      required: [true, "Mobile number is required"],
+      match: [/^\d{10}$/, "Please enter a valid 10-digit mobile number"],
+    },
+    refreshToken: {
+      type: String,
+    },
   },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-    match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
-    trim: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: [6, "Password must be at least 6 characters"],
-  },
-  mobileNumber: {
-    type: String,
-    required: [true, "Mobile number is required"],
-    match: [/^\d{10}$/, "Please enter a valid 10-digit mobile number"],
-  },
-  refreshToken: {
-    type: String,
-  }
-});
+  { timestamps: true }
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -37,8 +40,6 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
-
-
 
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
@@ -48,7 +49,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
-      _id: this._id,  
+      _id: this._id,
       email: this.email,
       name: this.name,
     },
