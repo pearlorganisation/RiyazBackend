@@ -6,7 +6,7 @@ import morgan from "morgan";
 import { connectToMongoDB } from "./src/configs/db/connectToMongoDB.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
-
+import vehicleRoutes from "./src/routes/vehicleRoutes.js";
 dotenv.config();
 const app = express();
 
@@ -26,6 +26,7 @@ app.use(morgan("dev"));
 // Routes Declaration
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/vehicle", vehicleRoutes);
 
 connectToMongoDB()
   .then(() => {
