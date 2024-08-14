@@ -8,7 +8,7 @@ class ApiErrorResponse extends Error {
       Error.captureStackTrace(this, this.constructor);
     } else {
       this.stack = stack;
-    }
+    } 
   }
 }
 

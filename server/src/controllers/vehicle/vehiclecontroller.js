@@ -18,5 +18,50 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
   if (!vehicles) {
     return next(new ApiErrorResponse("Vehicle not found", 404));
   }
-  return res.status(200).json({ success: true, message: "Vehicles retrieved successfully", data: vehicles});
+  return res.status(200).json({
+    success: true,
+    message: "Vehicles retrieved successfully",
+    data: vehicles,
+  });
+});
+
+export const searchVehicle = asyncHandler(async (req, res, next) => {
+  const queryObj = {
+    pickupLocation: req.query.pickupLocation,
+    destination: req.query.destination,
+    pickupDate: req.query.pickupDate,
+    pickupTime: req.query.pickupTime,
+  };
+
+  console.log("-- ", req.query.sortBy);
+  const sortOption = {};
+  switch (req.query.sortBy) {
+    case "price-asc":
+      sortOption.price = 1;
+      break;
+    case "price-desc":
+      sortOption.price = -1;
+      break;
+    case "rating-asc":
+      sortOption["ratings.averageRating"] = 1;
+      break;
+    case "rating-desc":
+      sortOption["ratings.averageRating"] = -1;
+      break;
+  }
+
+  console.log(sortOption, "Sorting queryyy");
+  const vehicles = await Vehicle.find(queryObj).sort(sortOption);
+  console.log(vehicles);
+  if (!vehicles) {
+    return next(
+      new ApiErrorResponse("No vehicles found for the given criteria", 404)
+    );
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Vehicles retrieved successfully",
+    data: vehicles,
+  });
 });

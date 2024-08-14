@@ -1,55 +1,69 @@
 import mongoose from "mongoose";
 
-const vehicleSchema = new mongoose.Schema({
-  vehicleName: {
-    type: String,
-    required: true,
-  },
-  vehicleType: {
-    type: String,
-    enum: [
-      "Car",
-      "Bus",
-      "Van",
-      "Bike",
-      "Truck",
-      "SUV",
-      "Mini Bus",
-      "Limousine",
-      "Sedans",
-    ],
-    required: true,
-  },
-  passengersCapacity: {
-    type: Number,
-    required: true,
-  },
-  luggageCapacity: {
-    type: Number,
-    required: true,
-  },
-  photos: {
-    type: [String], // Array of photo URLs
-    required: false,
-  },
-  ratings: {
-    averageRating: {
-      type: Number,
-      min: 0,
-      max: 5,
-      default: 0,
+const vehicleSchema = new mongoose.Schema(
+  {
+    vehicleName: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    numberOfRatings: {
-      type: Number,
-      default: 0,
+    vehicleType: {
+      type: String,
+      enum: ["Van", "Bus", "SUV", "Mini Bus", "Limousine", "Sedan"],
+      required: true,
     },
+    passengersCapacity: {
+      type: Number,
+      required: true,
+    },
+    luggageCapacity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    photos: {
+      type: [String], // Array of photo URLs
+      required: false,
+    },
+    ratings: {
+      averageRating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0,
+      },
+      numberOfRatings: {
+        type: Number,
+        default: 0,
+      },
+    },
+    pickupLocation: {
+      type: String,
+      required: true,
+    },
+    destination: {
+      type: String,
+      required: true,
+    },
+    pickupDate: {
+      type: Date,
+      required: true,
+    },
+    pickupTime: {
+      type: String,
+      required: true,
+    },
+    //   provider: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "ServiceProvider",
+    //     required: true,
+    //   },
   },
-  //   provider: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "ServiceProvider",
-  //     required: true,
-  //   },
-}, {timestamps: true});
+  { timestamps: true }
+);
 
 const Vehicle = mongoose.model("Vehicle", vehicleSchema);
 

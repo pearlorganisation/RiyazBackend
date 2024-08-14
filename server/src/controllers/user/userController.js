@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { COOKIE_OPTIONS } from "../../../constants.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
-import { sendMail } from "../../utils/sendMail.js";
+// import { sendMail } from "../../utils/email/sendMail.js";
+import { sendForgotPasswordMail } from "../../utils/email/sendForgotPasswordMail.js";
 
 export const refreshAccessToken = asyncHandler(async (req, res, next) => {
   const clientRefreshToken = req.cookies.refresh_token;
@@ -79,9 +80,9 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
     }
   );
 
-  const resetLink = `http://localhost:3000/api/v1/user/reset-password/${resetToken}`; // later on change to ${process.env.CLIENT_URL}
+  //const resetLink = `http://localhost:3000/api/v1/user/reset-password/${resetToken}`; // later on change to ${process.env.CLIENT_URL}
 
-  sendMail(email, resetLink)
+  sendForgotPasswordMail(email, resetToken)
     .then(() => {
       return res.status(200).json({
         success: true,
