@@ -1,6 +1,29 @@
 import nodemailer from "nodemailer";
+import ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-export const sendMail = (email, link) => {
+export const sendMail = async ({
+  email,
+  subject,
+  templateName,
+  templateData,
+}) => {
+  const __fileName = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__fileName);
+  const templatePath = path.join(
+    __dirname,
+    "../../views/email",
+    `${templateName}.ejs`
+  );
+
+  const html = await ejs.renderFile(templatePath, {
+    resetLink: "http://example.com/reset-password",
+  });
+
+  if (typeof html !== "string") {
+    throw new Error("Rendered HTML is not a string");
+  }
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -15,8 +38,8 @@ export const sendMail = (email, link) => {
   let mailOptions = {
     from: process.env.NODEMAILER_EMAIL_USER,
     to: email,
-    subject: "Password reset request",
-    html: `<p style="font-family: Arial, sans-serif; color: #333;">Click <a href="${link}" style="color: #1a73e8; text-decoration: none;">here</a> to reset your password.</p>`,
+    subject,
+    html,
   };
 
   return new Promise((resolve, reject) => {

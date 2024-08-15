@@ -79,10 +79,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
       expiresIn: "1d",
     }
   );
-
-  //const resetLink = `http://localhost:3000/api/v1/user/reset-password/${resetToken}`; // later on change to ${process.env.CLIENT_URL}
-
-  sendForgotPasswordMail(email, resetToken)
+  await sendForgotPasswordMail(email, resetToken)
     .then(() => {
       return res.status(200).json({
         success: true,
@@ -91,7 +88,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
         resetLink,
       });
     })
-    .catch(() => {
+    .catch((error) => {
       res.status(400).json({
         success: false,
         message: `Unable to send mail! ${error.message}`,
