@@ -16,14 +16,7 @@ export const sendMail = async ({
     "../../views/email",
     `${templateName}.ejs`
   );
-
-  const html = await ejs.renderFile(templatePath, {
-    resetLink: "http://example.com/reset-password",
-  });
-
-  if (typeof html !== "string") {
-    throw new Error("Rendered HTML is not a string");
-  }
+  const html = await ejs.renderFile(templatePath, templateData);
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,

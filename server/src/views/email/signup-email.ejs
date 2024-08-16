@@ -1,0 +1,26 @@
+<!-- views/signup-email.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup Email</title>
+  </head>
+  <body>
+    <div>
+      <p>
+        Thank you for signing up on our platform. Please verify your email
+        address by clicking the link below:
+      </p>
+      <p>
+        <a
+          href="<%= verificationLink %>"
+          style="color: #4caf50; text-decoration: none"
+          >Verify Your Email</a
+        >
+      </p>
+      <p>If you didn't sign up for this account, you can ignore this email.</p>
+      <p>Best regards,<br />Riaz</p>
+    </div>
+  </body>
+</html>

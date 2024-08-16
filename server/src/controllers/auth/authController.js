@@ -2,6 +2,9 @@ import User from "../../models/user.js";
 import { COOKIE_OPTIONS } from "../../../constants.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import jwt from "jsonwebtoken";
+import { generateSignupToken } from "../../utils/generateToken.js";
+import { sendSignupMail } from "../../utils/email/emailTemplates.js";
 
 //SIGNUP Controller
 export const signup = asyncHandler(async (req, res, next) => {
@@ -13,15 +16,43 @@ export const signup = asyncHandler(async (req, res, next) => {
   if (existingUser) {
     return next(new ApiErrorResponse("User already exits", 400));
   }
-  const newUser = await User.create({
+  const verificationToken = generateSignupToken({
     name,
     email,
     password,
     mobileNumber,
   });
-  res
+  await sendSignupMail(email, verificationToken)
+    .then(() => {
+      return res.status(200).json({
+        success: true,
+        message:
+          "Mail sent successfully. Please check your email, including the spam or junk folder to verify your account",
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        success: false,
+        message: `Unable to send mail: ${error.message}`,
+      });
+    });
+});
+
+export const verifySignupToken = asyncHandler(async (req, res, next) => {
+  const { token } = req.params;
+  if (!token) {
+    return next(new ApiErrorResponse("Token is not provided", 400));
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  if (!decoded) {
+    return next(
+      new ApiErrorResponse("Email is not verified or Invalid token", 400)
+    );
+  }
+  const user = User.create(decoded);
+  return res
     .status(201)
-    .json({ success: true, message: "User register successfully" });
+    .json({ success: true, message: "Email verified successfully" });
 });
 
 //LOGIN Controller

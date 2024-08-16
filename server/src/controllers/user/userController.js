@@ -3,8 +3,7 @@ import jwt from "jsonwebtoken";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { COOKIE_OPTIONS } from "../../../constants.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
-// import { sendMail } from "../../utils/email/sendMail.js";
-import { sendForgotPasswordMail } from "../../utils/email/sendForgotPasswordMail.js";
+import { sendForgotPasswordMail } from "../../utils/email/emailTemplates.js";
 
 export const refreshAccessToken = asyncHandler(async (req, res, next) => {
   const clientRefreshToken = req.cookies.refresh_token;
@@ -85,7 +84,6 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
         success: true,
         message:
           "Mail sent successfully. Please check your email, including the spam or junk folder to reset your password.",
-        resetLink,
       });
     })
     .catch((error) => {
