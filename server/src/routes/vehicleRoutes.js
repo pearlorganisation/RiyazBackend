@@ -4,7 +4,7 @@ import {
   createVehicle,
   getAllVehicles,
   searchVehicle,
-} from "../controllers/vehicle/vehiclecontroller.js";
+} from "../controllers/vehicle/vehicleController.js";
 
 const router = express.Router();
 

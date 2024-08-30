@@ -38,6 +38,7 @@ export const signup = asyncHandler(async (req, res, next) => {
     });
 });
 
+//VERIFY SIGNUP token controller
 export const verifySignupToken = asyncHandler(async (req, res, next) => {
   const { token } = req.params;
   if (!token) {
@@ -75,7 +76,7 @@ export const login = asyncHandler(async (req, res, next) => {
 
   existingUser.refreshToken = refresh_token;
   await existingUser.save({ validateBeforeSave: false });
-
+  console.log("token: ", access_token);
   res
     .cookie("access_token", access_token, {
       ...COOKIE_OPTIONS,

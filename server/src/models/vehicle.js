@@ -23,7 +23,7 @@ const vehicleSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
-    },
+    }, 
     photos: {
       type: [String], // Array of photo URLs
       required: false,
@@ -56,6 +56,12 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
     //   provider: {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "ServiceProvider",

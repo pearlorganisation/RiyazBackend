@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { AvailableUserRoles, UserRolesEnum } from "../../constants.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,6 +27,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Mobile number is required"],
       match: [/^\d{10}$/, "Please enter a valid 10-digit mobile number"],
+    },
+    role: {
+      type: String,
+      enum: AvailableUserRoles,
+      default: UserRolesEnum.CUSTOMER,
     },
     refreshToken: {
       type: String,

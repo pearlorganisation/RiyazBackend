@@ -8,12 +8,12 @@ import { sendForgotPasswordMail } from "../../utils/email/emailTemplates.js";
 export const refreshAccessToken = asyncHandler(async (req, res, next) => {
   const clientRefreshToken = req.cookies.refresh_token;
   if (!clientRefreshToken) {
-    return next(new ApiErrorResponse("Unauthorized Request!", 401));
+    return next(new ApiErrorResponse("Unauthorized Request", 401));
   }
 
   const decoded = jwt.verify(
     clientRefreshToken,
-    process.env.ACCESS_TOKEN_SECRET
+    process.env.REFRESH_TOKEN_SECRET
   );
 
   if (!decoded) return next(new ApiErrorResponse("Invalid refresh token", 401));
@@ -21,16 +21,24 @@ export const refreshAccessToken = asyncHandler(async (req, res, next) => {
   const user = await User.findById(decoded._id);
 
   if (!user || clientRefreshToken !== user.refreshToken)
-    return next(new ApiErrorResponse("Refresh token is expired!", 401));
+    return next(new ApiErrorResponse("Refresh token is expired", 401));
 
   const refresh_token = user.generateRefreshToken();
   const access_token = user.generateAccessToken();
-  await user.save();
+
+  user.refreshToken = refresh_token;
+  await user.save({ validateBeforeSave: false });
 
   return res
     .status(200)
-    .cookie("access_token", access_token, COOKIE_OPTIONS)
-    .cookie("refresh_token", refresh_token, COOKIE_OPTIONS)
+    .cookie("access_token", access_token, {
+      ...COOKIE_OPTIONS,
+      expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), //1day set 15min later on
+    })
+    .cookie("refresh_token", refresh_token, {
+      ...COOKIE_OPTIONS,
+      expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15day
+    })
     .json({ access_token, refresh_token });
 });
 
