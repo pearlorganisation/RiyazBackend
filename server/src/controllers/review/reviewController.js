@@ -3,7 +3,6 @@ import Vehicle from "../../models/vehicle.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 export const submitReview = asyncHandler(async (req, res, next) => {
-  const { _id } = req.user;
   const { vehicleId, rating, content } = req.body;
 
   const vehicle = await Vehicle.findById(vehicleId);
@@ -12,7 +11,7 @@ export const submitReview = asyncHandler(async (req, res, next) => {
   }
   const review = new Review({
     vehicleId,
-    userId,
+    userId: req.user?._id,
     rating,
     content,
   });
