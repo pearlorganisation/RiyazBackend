@@ -23,23 +23,38 @@ const vehicleSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
-    }, 
+    },
     photos: {
       type: [String], // Array of photo URLs
       required: false,
     },
-    ratings: {
-      averageRating: {
-        type: Number,
-        min: 0,
-        max: 5,
-        default: 0,
+    // ratings: {
+    //   averageRating: {
+    //     type: Number,
+    //     min: 0,
+    //     max: 5,
+    //     default: 0,
+    //   },
+    //   numberOfRatings: {
+    //     type: Number,
+    //     default: 0,
+    //   },
+    // },
+    ratings: [
+      {
+        star: Number,
+        comment: String,
+        postedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
       },
-      numberOfRatings: {
-        type: Number,
-        default: 0,
-      },
+    ],
+    totalRatings: {
+      type: String,
+      default: 0,
     },
+
     pickupLocation: {
       type: String,
       required: true,
@@ -56,12 +71,12 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Review",
+    //   },
+    // ],
     //   provider: {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "ServiceProvider",

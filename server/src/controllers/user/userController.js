@@ -59,6 +59,11 @@ export const changePassword = asyncHandler(async (req, res, next) => {
     return next(new ApiErrorResponse("Wrong password", 400));
   }
 
+  if (newPassword === currentPassword) {
+    return next(
+      new ApiErrorResponse("New password cannot be same as old", 400)
+    );
+  }
   if (newPassword !== confirmNewPassword) {
     return next(new ApiErrorResponse("New passwords do not match", 400));
   }

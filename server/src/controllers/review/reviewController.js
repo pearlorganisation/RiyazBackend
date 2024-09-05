@@ -3,7 +3,8 @@ import Vehicle from "../../models/vehicle.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 export const submitReview = asyncHandler(async (req, res, next) => {
-  const { vehicleId, userId, rating, content } = req.body;
+  const { _id } = req.user;
+  const { vehicleId, rating, content } = req.body;
 
   const vehicle = await Vehicle.findById(vehicleId);
   if (!vehicle) {
@@ -18,7 +19,7 @@ export const submitReview = asyncHandler(async (req, res, next) => {
   await review.save();
 
   // Update vehicle's average rating and number of ratings
-  const reviews = await Review.find({ vehicleId }); 
+  const reviews = await Review.find({ vehicleId });
   const numberOfRatings = reviews.length;
   const averageRating =
     reviews.reduce((acc, review) => acc + review.rating, 0) / numberOfRatings;
