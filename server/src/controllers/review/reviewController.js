@@ -29,6 +29,7 @@ export const submitReview = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
+    message: "Review is created.",
     data: review,
   });
 });

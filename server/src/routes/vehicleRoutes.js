@@ -13,6 +13,7 @@ const router = express.Router();
 router.route("/").post(createVehicle).get(getAllVehicles);
 router.route("/:id").get(getSingleVehicle);
 router.route("/search").get(searchVehicle);
-router.route("/rating").post(verifyToken, rating);
+// router.route("/:id/reviews",  getAllReviews);
+// router.route("/rating").post(verifyToken, rating);
 
 export default router;
