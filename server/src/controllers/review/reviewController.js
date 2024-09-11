@@ -2,7 +2,7 @@ import Review from "../../models/review.js";
 import Vehicle from "../../models/vehicle.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
-export const submitReview = asyncHandler(async (req, res, next) => {
+export const createReview = asyncHandler(async (req, res, next) => {
   const { vehicleId, rating, content } = req.body;
 
   const vehicle = await Vehicle.findById(vehicleId);
