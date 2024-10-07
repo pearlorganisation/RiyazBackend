@@ -27,8 +27,9 @@ export const error = (err, req, res, next) => {
     const message = `Your Url is expired please try again letter!`;
     err = new ApiErrorResponse(message, 400);
   }
-  res.status(err.statusCode).json({
+  res.status(err.statusCode || 500).json({
     success: false,
     message: err.message || "Something went wrong",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
 };

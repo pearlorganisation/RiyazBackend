@@ -12,8 +12,8 @@ import {
 const router = express.Router();
 
 router.route("/").post(createVehicle).get(getAllVehicles);
-router.route("/:id").get(getSingleVehicle);
 router.route("/search").get(searchVehicle);
+router.route("/:id").get(getSingleVehicle);
 
 //Reviews routes
 router.route("/:id/reviews").get(getAllReviews);

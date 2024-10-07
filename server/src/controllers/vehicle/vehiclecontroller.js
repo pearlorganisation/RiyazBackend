@@ -44,14 +44,11 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
 });
 
 export const searchVehicle = asyncHandler(async (req, res, next) => {
-  const queryObj = {
-    pickupLocation: req.query.pickupLocation,
-    destination: req.query.destination,
-    pickupDate: req.query.pickupDate,
-    pickupTime: req.query.pickupTime,
-  };
+  // Construct search query based on user input
+  const queryObj = constructVehicleSearchQuery(req.query);
 
-  console.log("-- ", req.query.sortBy);
+  // console.log("fdsjk", queryObj);
+  // console.log("-- ", req.query.sortBy);
   const sortOption = {};
   switch (req.query.sortBy) {
     case "price-asc":
@@ -68,19 +65,39 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
       break;
   }
 
-  console.log(sortOption, "Sorting queryyy");
-  const vehicles = await Vehicle.find(queryObj).sort(sortOption);
-  console.log(vehicles);
-  if (!vehicles) {
+  // console.log(sortOption, "Sorting queryyy");
+
+  // Pagination setup
+  const pageSize = 5;
+  const pageNumber = parseInt(req.query.page || "1");
+  const skip = (pageNumber - 1) * pageSize;
+
+  // Fetch vehicles based on constructed query and sorting options
+  const vehicles = await Vehicle.find(queryObj)
+    .sort(sortOption)
+    .skip(skip)
+    .limit(pageSize);
+
+  // If no vehicles are found, send an error response
+  if (!vehicles || vehicles.length === 0) {
     return next(
       new ApiErrorResponse("No vehicles found for the given criteria", 404)
     );
   }
 
+  // Total count for pagination
+  const total = await Vehicle.countDocuments(queryObj);
+
+  // Response with pagination info
   return res.status(200).json({
     success: true,
     message: "Vehicles retrieved successfully",
     data: vehicles,
+    pagination: {
+      total,
+      page: pageNumber,
+      pages: Math.ceil(total / pageSize),
+    },
   });
 });
 
@@ -96,50 +113,30 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
   });
 });
 
-// export const rating = asyncHandler(async (req, res) => {
-//   const { _id } = req.user;
+// Helper function to construct search query based on request parameters
+const constructVehicleSearchQuery = (queryParams) => {
+  let constructedQuery = {};
 
-//   const { star, vehicleId, comment } = req.body;
+  if (queryParams.pickupLocation) {
+    constructedQuery.pickupLocation = new RegExp(
+      queryParams.pickupLocation,
+      "i"
+    );
+  }
 
-//   try {
-//     const vehicle = await Vehicle.findById(vehicleId);
+  if (queryParams.destination) {
+    constructedQuery.destination = new RegExp(queryParams.destination, "i");
+  }
 
-//     let alreadyRated = vehicle.ratings.find(
-//       (userId) => userId.postedBy.toString() === _id.toString()
-//     );
+  if (queryParams.pickupDate) {
+    constructedQuery.pickupDate = queryParams.pickupDate;
+  }
 
-//     if (alreadyRated) {
-//       const updatedRating = await Vehicle.updateOne(
-//         {
-//           ratings: { $elemMatch: alreadyRated },
-//         },
-//         { $set: { "ratings.$.star": star, "ratings.$.comment": comment } },
-//         { new: true }
-//       );
+  if (queryParams.pickupTime) {
+    constructedQuery.pickupTime = queryParams.pickupTime;
+  }
 
-//       res.status(200).json({ message: "Updated Rating" });
-//     } else {
-//       const ratedVehicle = await Vehicle.findByIdAndUpdate(
-//         vehicleId,
-//         {
-//           $push: {
-//             ratings: {
-//               star: star,
-//               postedBy: _id,
-//               comment: comment,
-//             },
-//           },
-//         },
-//         {
-//           new: true,
-//         }
-//       );
+  // Additional filtering logic can be added here as needed (e.g., vehicle type, ratings, etc.)
 
-//       res
-//         .status(200)
-//         .json({ message: "Rated the vehicle", data: ratedVehicle });
-//     }
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// });
+  return constructedQuery;
+};

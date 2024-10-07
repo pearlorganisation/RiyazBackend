@@ -12,7 +12,7 @@ const vehicleSchema = new mongoose.Schema(
       enum: ["Van", "Bus", "SUV", "Mini Bus", "Limousine", "Sedan"],
       required: true,
     },
-    passengersCapacity: {
+    passengerCapacity: {
       type: Number,
       required: true,
     },
