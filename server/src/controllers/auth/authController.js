@@ -74,28 +74,31 @@ export const verifySignupToken = asyncHandler(async (req, res, next) => {
   const user = await User.create(decoded);
 
   // Generate access and refresh tokens
-  const access_token = user.generateAccessToken();
-  const refresh_token = user.generateRefreshToken();
+  // const access_token = user.generateAccessToken();
+  // const refresh_token = user.generateRefreshToken();
 
-  // Set the refresh token in the user document
-  user.refreshToken = refresh_token;
-  await user.save({
-    validateBeforeSave: false
-  });
+  // // Set the refresh token in the user document
+  // user.refreshToken = refresh_token;
+  // await user.save({
+  //   validateBeforeSave: false
+  // });
 
-  // Set tokens as cookies
-  res
-    .cookie("access_token", access_token, {
-      ...COOKIE_OPTIONS,
-      expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day
-    })
-    .cookie("refresh_token", refresh_token, {
-      ...COOKIE_OPTIONS,
-      expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days
-    });
+  // // Set tokens as cookies
+  // res
+  //   .cookie("access_token", access_token, {
+  //     ...COOKIE_OPTIONS,
+  //     expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day
+  //   })
+  //   .cookie("refresh_token", refresh_token, {
+  //     ...COOKIE_OPTIONS,
+  //     expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days
+  //   });
 
   // Redirect to the frontend main page for testing right now
-  return res.redirect(`${process.env.FRONTEND_MAIN_PAGE_URL}`);
+  if(!user){
+    return next(new ApiErrorResponse("Failed to create user",400))
+  }
+  return res.redirect(`${process.env.FRONTEND_LOGIN_PAGE_URL}`);
 });
 
 
