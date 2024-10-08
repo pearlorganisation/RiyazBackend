@@ -39,22 +39,67 @@ export const signup = asyncHandler(async (req, res, next) => {
 });
 
 //VERIFY SIGNUP token controller
+// export const verifySignupToken = asyncHandler(async (req, res, next) => {
+//   const { token } = req.params;
+//   if (!token) {
+//     return next(new ApiErrorResponse("Token is not provided", 400));
+//   }
+//   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+//   if (!decoded) {
+//     return next(
+//       new ApiErrorResponse("Email is not verified or Invalid token", 400)
+//     );
+//   }
+//   const user = User.create(decoded);
+//   return res
+//     .status(201)
+//     .json({ success: true, message: "Email verified successfully" });
+// });
+
 export const verifySignupToken = asyncHandler(async (req, res, next) => {
-  const { token } = req.params;
+  const {
+    token
+  } = req.params;
+
   if (!token) {
     return next(new ApiErrorResponse("Token is not provided", 400));
   }
+
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
   if (!decoded) {
     return next(
       new ApiErrorResponse("Email is not verified or Invalid token", 400)
     );
   }
-  const user = User.create(decoded);
-  return res
-    .status(201)
-    .json({ success: true, message: "Email verified successfully" });
+
+  // Create the user
+  const user = await User.create(decoded);
+
+  // Generate access and refresh tokens
+  const access_token = user.generateAccessToken();
+  const refresh_token = user.generateRefreshToken();
+
+  // Set the refresh token in the user document
+  user.refreshToken = refresh_token;
+  await user.save({
+    validateBeforeSave: false
+  });
+
+  // Set tokens as cookies
+  res
+    .cookie("access_token", access_token, {
+      ...COOKIE_OPTIONS,
+      expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day
+    })
+    .cookie("refresh_token", refresh_token, {
+      ...COOKIE_OPTIONS,
+      expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days
+    });
+
+  // Redirect to the frontend main page for testing right now
+  return res.redirect(`${process.env.FRONTEND_MAIN_PAGE_URL}`);
 });
+
 
 //LOGIN Controller
 export const login = asyncHandler(async (req, res, next) => {
