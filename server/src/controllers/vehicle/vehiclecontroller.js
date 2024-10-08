@@ -136,7 +136,41 @@ const constructVehicleSearchQuery = (queryParams) => {
     constructedQuery.pickupTime = queryParams.pickupTime;
   }
 
-  // Additional filtering logic can be added here as needed (e.g., vehicle type, ratings, etc.)
+  if (queryParams.serviceType) {
+    constructedQuery.serviceType = {
+      $in: Array.isArray(queryParams.serviceType)
+        ? queryParams.serviceType
+        : [queryParams.serviceType],
+    };
+  }
+
+  if (queryParams.vehicleType) {
+    constructedQuery.vehicleType = {
+      $in: Array.isArray(queryParams.vehicleType)
+        ? queryParams.vehicleType
+        : [queryParams.vehicleType],
+    };
+  }
+
+  if (queryParams.vehicleClass) {
+    constructedQuery.vehicleClass = {
+      $in: Array.isArray(queryParams.vehicleClass)
+        ? queryParams.vehicleClass
+        : [queryParams.vehicleClass],
+    };
+  }
+
+  if (queryParams.rating) {
+    constructedQuery["ratings.averageRating"] = {
+      $gte: parseInt(queryParams.rating),
+    };
+  }
+
+  if (queryParams.reviews) {
+    constructedQuery["ratings.numberOfRatings"] = {
+      $gte: parseInt(queryParams.reviews),
+    };
+  }
 
   return constructedQuery;
 };

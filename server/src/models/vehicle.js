@@ -7,9 +7,18 @@ const vehicleSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    serviceType: {
+      type: String,
+      enum: ["Shared", "Private", "Rideshare"],
+    },
     vehicleType: {
       type: String,
-      enum: ["Van", "Bus", "SUV", "Mini Bus", "Limousine", "Sedan"],
+      enum: ["Van", "Bus", "SUV", "Limousine", "Sedan"],
+      required: true,
+    },
+    vehicleClass: {
+      type: String,
+      enum: ["Economy", "Business", "Luxury"],
       required: true,
     },
     passengerCapacity: {
