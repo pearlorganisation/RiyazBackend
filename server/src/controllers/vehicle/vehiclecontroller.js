@@ -2,6 +2,7 @@ import Vehicle from "../../models/vehicle.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import validateMongodbID from "../../utils/validateMongodbID.js";
+import Review from "../../models/review.js";
 
 export const createVehicle = asyncHandler(async (req, res, next) => {
   const vehicle = new Vehicle(req.body);
@@ -43,14 +44,11 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
 });
 
 export const searchVehicle = asyncHandler(async (req, res, next) => {
-  const queryObj = {
-    pickupLocation: req.query.pickupLocation,
-    destination: req.query.destination,
-    pickupDate: req.query.pickupDate,
-    pickupTime: req.query.pickupTime,
-  };
+  // Construct search query based on user input
+  const queryObj = constructVehicleSearchQuery(req.query);
 
-  console.log("-- ", req.query.sortBy);
+  // console.log("fdsjk", queryObj);
+  // console.log("-- ", req.query.sortBy);
   const sortOption = {};
   switch (req.query.sortBy) {
     case "price-asc":
@@ -67,66 +65,78 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
       break;
   }
 
-  console.log(sortOption, "Sorting queryyy");
-  const vehicles = await Vehicle.find(queryObj).sort(sortOption);
-  console.log(vehicles);
-  if (!vehicles) {
+  // console.log(sortOption, "Sorting queryyy");
+
+  // Pagination setup
+  const pageSize = 5;
+  const pageNumber = parseInt(req.query.page || "1");
+  const skip = (pageNumber - 1) * pageSize;
+
+  // Fetch vehicles based on constructed query and sorting options
+  const vehicles = await Vehicle.find(queryObj)
+    .sort(sortOption)
+    .skip(skip)
+    .limit(pageSize);
+
+  // If no vehicles are found, send an error response
+  if (!vehicles || vehicles.length === 0) {
     return next(
       new ApiErrorResponse("No vehicles found for the given criteria", 404)
     );
   }
 
+  // Total count for pagination
+  const total = await Vehicle.countDocuments(queryObj);
+
+  // Response with pagination info
   return res.status(200).json({
     success: true,
     message: "Vehicles retrieved successfully",
     data: vehicles,
+    pagination: {
+      total,
+      page: pageNumber,
+      pages: Math.ceil(total / pageSize),
+    },
   });
 });
 
-export const rating = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-
-  const { star, vehicleId, comment } = req.body;
-
-  try {
-    const vehicle = await Vehicle.findById(vehicleId);
-
-    let alreadyRated = vehicle.ratings.find(
-      (userId) => userId.postedBy.toString() === _id.toString()
-    );
-
-    if (alreadyRated) {
-      const updatedRating = await Vehicle.updateOne(
-        {
-          ratings: { $elemMatch: alreadyRated },
-        },
-        { $set: { "ratings.$.star": star, "ratings.$.comment": comment } },
-        { new: true }
-      );
-
-      res.status(200).json({ message: "Updated Rating" });
-    } else {
-      const ratedVehicle = await Vehicle.findByIdAndUpdate(
-        vehicleId,
-        {
-          $push: {
-            ratings: {
-              star: star,
-              postedBy: _id,
-              comment: comment,
-            },
-          },
-        },
-        {
-          new: true,
-        }
-      );
-
-      res
-        .status(200)
-        .json({ message: "Rated the vehicle", data: ratedVehicle });
-    }
-  } catch (error) {
-    throw new Error(error);
+export const getAllReviews = asyncHandler(async (req, res, next) => {
+  const reviews = await Review.find({ vehicleId: req.params.id });
+  if (!reviews || reviews.length === 0) {
+    return next(new ApiErrorResponse("No reviews found for this vehicle", 404));
   }
+  return res.status(200).json({
+    success: true,
+    message: "Reviews retrieved successfully",
+    data: reviews,
+  });
 });
+
+// Helper function to construct search query based on request parameters
+const constructVehicleSearchQuery = (queryParams) => {
+  let constructedQuery = {};
+
+  if (queryParams.pickupLocation) {
+    constructedQuery.pickupLocation = new RegExp(
+      queryParams.pickupLocation,
+      "i"
+    );
+  }
+
+  if (queryParams.destination) {
+    constructedQuery.destination = new RegExp(queryParams.destination, "i");
+  }
+
+  if (queryParams.pickupDate) {
+    constructedQuery.pickupDate = queryParams.pickupDate;
+  }
+
+  if (queryParams.pickupTime) {
+    constructedQuery.pickupTime = queryParams.pickupTime;
+  }
+
+  // Additional filtering logic can be added here as needed (e.g., vehicle type, ratings, etc.)
+
+  return constructedQuery;
+};

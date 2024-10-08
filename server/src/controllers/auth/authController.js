@@ -3,7 +3,7 @@ import { COOKIE_OPTIONS } from "../../../constants.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
-import { generateSignupToken } from "../../utils/generateToken.js";
+import { generateSignupToken } from "../../utils/tokenHelper.js";
 import { sendSignupMail } from "../../utils/email/emailTemplates.js";
 
 //SIGNUP Controller

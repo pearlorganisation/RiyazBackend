@@ -32,9 +32,9 @@ app.set("views", path.resolve("./views"));
 
 // Routes Declaration
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/vehicle", vehicleRoutes);
-app.use("/api/v1/review", reviewRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/vehicles", vehicleRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 app.use(error);
 

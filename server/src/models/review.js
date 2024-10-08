@@ -5,7 +5,7 @@ const reviewSchema = new mongoose.Schema(
     vehicleId: {
       type: mongoose.Types.ObjectId,
       ref: "Vehicle",
-      required: [true, "User id is required"],
+      required: [true, "Vehicle id is required"],
     },
     userId: {
       type: mongoose.Types.ObjectId,
