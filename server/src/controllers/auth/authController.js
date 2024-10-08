@@ -57,9 +57,7 @@ export const signup = asyncHandler(async (req, res, next) => {
 // });
 
 export const verifySignupToken = asyncHandler(async (req, res, next) => {
-  const {
-    token
-  } = req.params;
+  const { token } = req.params;
 
   if (!token) {
     return next(new ApiErrorResponse("Token is not provided", 400));
