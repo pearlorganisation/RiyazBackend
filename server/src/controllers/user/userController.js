@@ -131,3 +131,11 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ success: true, message: "Password reset successfully" });
 });
+
+/** get user by id */
+
+// export const getUserDetails = asyncHandler(async(req,res,next)=>{
+//   const user = req.user;
+  
+//   return res.status(200).json({ data: user, success: true, message:"Get Auth User successfully"})
+// })

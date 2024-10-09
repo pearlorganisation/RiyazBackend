@@ -9,6 +9,10 @@ import { sendSignupMail } from "../../utils/email/emailTemplates.js";
 //SIGNUP Controller
 export const signup = asyncHandler(async (req, res, next) => {
   const { name, email, password, mobileNumber } = req.body;
+  // will add mobileNumber Validation later
+  // if(mobileNumber.length >10){
+  //   return res.status(400).json({message:"mORE NUMBERS"})
+  // }
   if (!name || !email || !password || !mobileNumber) {
     return next(new ApiErrorResponse("All fields are required", 400));
   }
