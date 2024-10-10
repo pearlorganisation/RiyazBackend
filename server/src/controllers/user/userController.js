@@ -145,8 +145,6 @@ export const getUserDetails = asyncHandler(async(req,res,next)=>{
 
 /** Update profile */
 
-// name , email, mobileNumber
-
 export const updateProfile = asyncHandler(async(req,res,next)=>{
   const { name , email, mobileNumber } = req.body;
   const updateValidationSchema = z.object({
@@ -175,5 +173,5 @@ export const updateProfile = asyncHandler(async(req,res,next)=>{
   
   if(!data){
     return next(new ApiErrorResponse("Failed to update the user profile",400))
-  }res.status(200).json({success: true, message:data})
+  }res.status(200).json({success: true, message:data},200)
 })
