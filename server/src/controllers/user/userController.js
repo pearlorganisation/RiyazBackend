@@ -134,8 +134,8 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
 /** get user by id */
 
-// export const getUserDetails = asyncHandler(async(req,res,next)=>{
-//   const user = req.user;
+export const getUserDetails = asyncHandler(async(req,res,next)=>{
+  const user = req.user;
   
-//   return res.status(200).json({ data: user, success: true, message:"Get Auth User successfully"})
-// })
+  return res.status(200).json({ data: user, success: true, message:"Get Auth User successfully"})
+})
