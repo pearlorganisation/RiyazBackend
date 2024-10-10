@@ -4,6 +4,8 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { COOKIE_OPTIONS } from "../../../constants.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import { sendForgotPasswordMail } from "../../utils/email/emailTemplates.js";
+import { z } from "zod";
+
 
 export const refreshAccessToken = asyncHandler(async (req, res, next) => {
   const clientRefreshToken = req.cookies.refresh_token;
@@ -138,4 +140,40 @@ export const getUserDetails = asyncHandler(async(req,res,next)=>{
   const user = req.user;
   
   return res.status(200).json({ data: user, success: true, message:"Get Auth User successfully"})
+})
+
+
+/** Update profile */
+
+// name , email, mobileNumber
+
+export const updateProfile = asyncHandler(async(req,res,next)=>{
+  const { name , email, mobileNumber } = req.body;
+  const updateValidationSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    mobileNumber: z.string().length(10, "Mobile number must be exactly 10 digits").regex(/^\d{10}$/, "Mobile number must contain only digits"),
+  });
+  
+  try {
+    updateValidationSchema.parse({name,email,mobileNumber});
+  } catch (error) {
+    return next(new ApiErrorResponse(error,400))
+  }
+  const data = await User.findByIdAndUpdate(req.user._id,
+    {
+      $set: {
+        name,
+        email,
+        mobileNumber
+      },
+    },
+    {
+      new: true
+    }
+  )
+  
+  if(!data){
+    return next(new ApiErrorResponse("Failed to update the user profile",400))
+  }res.status(200).json({success: true, message:data})
 })
