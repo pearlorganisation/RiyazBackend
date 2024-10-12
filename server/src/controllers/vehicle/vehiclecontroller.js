@@ -44,6 +44,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
 });
 
 export const searchVehicle = asyncHandler(async (req, res, next) => {
+  // console.log(req.query);
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
 
@@ -138,7 +139,7 @@ const constructVehicleSearchQuery = (queryParams) => {
 
   if (queryParams.serviceType) {
     constructedQuery.serviceType = {
-      $in: Array.isArray(queryParams.serviceType)
+      $in: Array.isArray(queryParams.serviceType) // $in: queryParams.serviceType.split(",") -> ?serviceType=Shared,Private ->serviceType = "Shared,Private"
         ? queryParams.serviceType
         : [queryParams.serviceType],
     };
