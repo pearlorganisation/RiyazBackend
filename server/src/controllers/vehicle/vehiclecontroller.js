@@ -44,7 +44,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
 });
 
 export const searchVehicle = asyncHandler(async (req, res, next) => {
-  // console.log(req.query);
+  console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
 
@@ -69,7 +69,7 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
   // console.log(sortOption, "Sorting queryyy");
 
   // Pagination setup
-  const pageSize = 5;
+  const pageSize = parseInt(req.query.limit || "5"); 
   const pageNumber = parseInt(req.query.page || "1");
   const skip = (pageNumber - 1) * pageSize;
 
@@ -93,12 +93,13 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "Vehicles retrieved successfully",
-    data: vehicles,
     pagination: {
       total,
       page: pageNumber,
+      pageSize,
       pages: Math.ceil(total / pageSize),
     },
+    data: vehicles,
   });
 });
 
