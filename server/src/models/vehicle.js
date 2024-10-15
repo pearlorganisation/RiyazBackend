@@ -33,7 +33,7 @@ const vehicleSchema = new mongoose.Schema(
       type: Number,
       // required: true,
     },
-    photos: {
+    images: {
       type: [String], // Array of photo URLs
       required: false,
     },

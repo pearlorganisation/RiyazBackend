@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken } from "../middleware/authMidleware.js";
+// import { verifyToken } from "../middleware/authMidleware.js";
 import {
   createVehicle,
   getAllReviews,
@@ -10,7 +10,10 @@ import {
 
 const router = express.Router();
 
-router.route("/").post(createVehicle).get(getAllVehicles);
+router
+  .route("/")
+  .post(upload.array("images", 5), createVehicle)
+  .get(getAllVehicles);
 router.route("/search").get(searchVehicle);
 router.route("/:id").get(getSingleVehicle);
 router.route("/:id/reviews").get(getAllReviews);
