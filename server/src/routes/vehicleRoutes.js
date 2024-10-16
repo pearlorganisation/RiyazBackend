@@ -1,5 +1,6 @@
 import express from "express";
 // import { verifyToken } from "../middleware/authMidleware.js";
+import { upload } from "../middleware/multer.js";
 import {
   createVehicle,
   getAllReviews,

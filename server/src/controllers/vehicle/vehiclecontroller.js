@@ -3,16 +3,21 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import validateMongodbID from "../../utils/validateMongodbID.js";
 import Review from "../../models/review.js";
+import { uploadFileToCloudinary } from "../../configs/cloudinary/cloudinary.js";
 
 export const createVehicle = asyncHandler(async (req, res, next) => {
-  const vehicle = new Vehicle(req.body);
+  const images = req.files;
+  console.log(req.files);
+  const response = await uploadFileToCloudinary(images);
+  console.log(response);
+  const vehicle = new Vehicle({ ...req.body, images: response });
   if (!vehicle) {
     return next(new ApiErrorResponse("Vehicle not created", 400));
   }
   await vehicle.save();
   return res
     .status(201)
-    .json({ success: true, message: "Vehicle created", data: vehicle });
+    .json({ success: true, message: "Vehicle is created", data: vehicle });
 });
 
 export const getSingleVehicle = asyncHandler(async (req, res, next) => {
@@ -69,7 +74,7 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
   // console.log(sortOption, "Sorting queryyy");
 
   // Pagination setup
-  const pageSize = parseInt(req.query.limit || "5"); 
+  const pageSize = parseInt(req.query.limit || "5");
   const pageNumber = parseInt(req.query.page || "1");
   const skip = (pageNumber - 1) * pageSize;
 

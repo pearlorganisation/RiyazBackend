@@ -7,8 +7,7 @@ import { generateSignupToken } from "../../utils/tokenHelper.js";
 import { sendSignupMail } from "../../utils/email/emailTemplates.js";
 import { z } from "zod";
 
-
-// signup schema for validation 
+// signup schema for validation
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
@@ -22,16 +21,16 @@ const signupSchema = z.object({
 //SIGNUP Controller
 export const signup = asyncHandler(async (req, res, next) => {
   const { name, email, password, mobileNumber } = req.body;
-//  if (!name || !email || !password || !mobileNumber) {
-//    return next(new ApiErrorResponse("All fields are required", 400));
-//  }
- 
+  //  if (!name || !email || !password || !mobileNumber) {
+  //    return next(new ApiErrorResponse("All fields are required", 400));
+  //  }
+
   try {
-    signupSchema.parse({ name,email,password,mobileNumber })
+    signupSchema.parse({ name, email, password, mobileNumber });
   } catch (error) {
-        return next(new ApiErrorResponse("Failed Validation", 400));
+    return next(new ApiErrorResponse("Failed Validation", 400));
   }
-  
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return next(new ApiErrorResponse(error.errors[0].message, 400));
@@ -58,24 +57,6 @@ export const signup = asyncHandler(async (req, res, next) => {
     });
 });
 
-//VERIFY SIGNUP token controller
-// export const verifySignupToken = asyncHandler(async (req, res, next) => {
-//   const { token } = req.params;
-//   if (!token) {
-//     return next(new ApiErrorResponse("Token is not provided", 400));
-//   }
-//   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-//   if (!decoded) {
-//     return next(
-//       new ApiErrorResponse("Email is not verified or Invalid token", 400)
-//     );
-//   }
-//   const user = User.create(decoded);
-//   return res
-//     .status(201)
-//     .json({ success: true, message: "Email verified successfully" });
-// });
-
 export const verifySignupToken = asyncHandler(async (req, res, next) => {
   const { token } = req.params;
 
@@ -92,12 +73,11 @@ export const verifySignupToken = asyncHandler(async (req, res, next) => {
 
   // Create the user
   const user = await User.create(decoded);
-  if(!user){
-    return next(new ApiErrorResponse("Failed to create user",400))
+  if (!user) {
+    return next(new ApiErrorResponse("Failed to create user", 400));
   }
   return res.redirect(`${process.env.FRONTEND_LOGIN_PAGE_URL}`);
 });
-
 
 //LOGIN Controller
 export const login = asyncHandler(async (req, res, next) => {

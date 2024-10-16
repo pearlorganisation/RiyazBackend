@@ -23,9 +23,7 @@ export const uploadFileToCloudinary = async (files) => {
   try {
     const isMultipleImages = Array.isArray(files);
     const imageFiles = isMultipleImages ? files : [files];
-    const uploadPromises = imageFiles.map((file) =>
-      uploadImage(file?.filepath)
-    );
+    const uploadPromises = imageFiles.map((file) => uploadImage(file?.path));
     const uploadResults = await Promise.all(uploadPromises);
 
     return uploadResults;
