@@ -14,24 +14,24 @@ const vehicleSchema = new mongoose.Schema(
     vehicleType: {
       type: String,
       enum: ["Van", "Bus", "SUV", "Limousine", "Sedan"],
-      // required: true,
+      required: true,
     },
     vehicleClass: {
       type: String,
       enum: ["Economy", "Business", "Luxury"],
-      // required: true,
+      required: true,
     },
     passengerCapacity: {
       type: Number,
-      // required: true,
+      required: true,
     },
     luggageCapacity: {
       type: Number,
-      // required: true,
+      required: true,
     },
     price: {
       type: Number,
-      // required: true,
+      required: true,
     },
     images: [
       {
@@ -45,7 +45,7 @@ const vehicleSchema = new mongoose.Schema(
         type: Number,
         min: 0,
         max: 5,
-        default: 0,
+        default: 0, 
       },
       numberOfRatings: {
         type: Number,
@@ -54,19 +54,19 @@ const vehicleSchema = new mongoose.Schema(
     },
     pickupLocation: {
       type: String,
-      // required: true,
+      required: true,
     },
     destination: {
       type: String,
-      // required: true,
+      required: true,
     },
     pickupDate: {
       type: Date,
-      // required: true,
+      required: true,
     },
     pickupTime: {
       type: String,
-      // required: true,
+      required: true,
     },
   },
   { timestamps: true }

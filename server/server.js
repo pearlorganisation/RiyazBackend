@@ -16,10 +16,10 @@ const app = express();
 
 const PORT = process.env.PORT || 8000;
 
-app.use(express.json({ extended: false }));
+app.use(express.json());
 app.use(
   cors({
-    origin: "*", // Allow requests from any origin
+    origin: "http://localhost:5173", // Allow requests from any origin
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify allowed methods
     credentials: true,
   })

@@ -10,11 +10,10 @@ export const createVehicle = asyncHandler(async (req, res, next) => {
   console.log(req.files);
   const response = await uploadFileToCloudinary(images);
   console.log(response);
-  const vehicle = new Vehicle({ ...req.body, images: response });
+  const vehicle = Vehicle.create({ ...req.body, images: response });
   if (!vehicle) {
     return next(new ApiErrorResponse("Vehicle not created", 400));
   }
-  await vehicle.save();
   return res
     .status(201)
     .json({ success: true, message: "Vehicle is created", data: vehicle });
