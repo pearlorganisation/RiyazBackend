@@ -7,10 +7,8 @@ import { uploadFileToCloudinary } from "../../configs/cloudinary/cloudinary.js";
 
 export const createVehicle = asyncHandler(async (req, res, next) => {
   const images = req.files;
-  console.log(req.files);
   const response = await uploadFileToCloudinary(images);
-  console.log(response);
-  const vehicle = Vehicle.create({ ...req.body, images: response });
+  const vehicle = await Vehicle.create({ ...req.body, images: response });
   if (!vehicle) {
     return next(new ApiErrorResponse("Vehicle not created", 400));
   }
@@ -48,7 +46,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
 });
 
 export const searchVehicle = asyncHandler(async (req, res, next) => {
-  console.log(req.query); //{} when no query send
+  //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
 
