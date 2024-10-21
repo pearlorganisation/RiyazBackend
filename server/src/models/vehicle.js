@@ -7,9 +7,18 @@ const vehicleSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    serviceType: {
+      type: String,
+      enum: ["Shared", "Private", "Rideshare"],
+    },
     vehicleType: {
       type: String,
-      enum: ["Van", "Bus", "SUV", "Mini Bus", "Limousine", "Sedan"],
+      enum: ["Van", "Bus", "SUV", "Limousine", "Sedan"],
+      required: true,
+    },
+    vehicleClass: {
+      type: String,
+      enum: ["Economy", "Business", "Luxury"],
       required: true,
     },
     passengerCapacity: {
@@ -22,18 +31,21 @@ const vehicleSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      // required: true,
+      required: true,
     },
-    photos: {
-      type: [String], // Array of photo URLs
-      required: false,
-    },
+    images: [
+      {
+        asset_id: { type: String, required: true },
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      },
+    ],
     ratings: {
       averageRating: {
         type: Number,
         min: 0,
         max: 5,
-        default: 0,
+        default: 0, 
       },
       numberOfRatings: {
         type: Number,

@@ -3,16 +3,18 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import validateMongodbID from "../../utils/validateMongodbID.js";
 import Review from "../../models/review.js";
+import { uploadFileToCloudinary } from "../../configs/cloudinary/cloudinary.js";
 
 export const createVehicle = asyncHandler(async (req, res, next) => {
-  const vehicle = new Vehicle(req.body);
+  const images = req.files;
+  const response = await uploadFileToCloudinary(images);
+  const vehicle = await Vehicle.create({ ...req.body, images: response });
   if (!vehicle) {
     return next(new ApiErrorResponse("Vehicle not created", 400));
   }
-  await vehicle.save();
   return res
     .status(201)
-    .json({ success: true, message: "Vehicle created", data: vehicle });
+    .json({ success: true, message: "Vehicle is created", data: vehicle });
 });
 
 export const getSingleVehicle = asyncHandler(async (req, res, next) => {
@@ -44,6 +46,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
 });
 
 export const searchVehicle = asyncHandler(async (req, res, next) => {
+  //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
 
@@ -68,7 +71,7 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
   // console.log(sortOption, "Sorting queryyy");
 
   // Pagination setup
-  const pageSize = 5;
+  const pageSize = parseInt(req.query.limit || "5");
   const pageNumber = parseInt(req.query.page || "1");
   const skip = (pageNumber - 1) * pageSize;
 
@@ -92,12 +95,13 @@ export const searchVehicle = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "Vehicles retrieved successfully",
-    data: vehicles,
     pagination: {
       total,
       page: pageNumber,
+      pageSize,
       pages: Math.ceil(total / pageSize),
     },
+    data: vehicles,
   });
 });
 
@@ -136,7 +140,41 @@ const constructVehicleSearchQuery = (queryParams) => {
     constructedQuery.pickupTime = queryParams.pickupTime;
   }
 
-  // Additional filtering logic can be added here as needed (e.g., vehicle type, ratings, etc.)
+  if (queryParams.serviceType) {
+    constructedQuery.serviceType = {
+      $in: Array.isArray(queryParams.serviceType) // $in: queryParams.serviceType.split(",") -> ?serviceType=Shared,Private ->serviceType = "Shared,Private"
+        ? queryParams.serviceType
+        : [queryParams.serviceType],
+    };
+  }
+
+  if (queryParams.vehicleType) {
+    constructedQuery.vehicleType = {
+      $in: Array.isArray(queryParams.vehicleType)
+        ? queryParams.vehicleType
+        : [queryParams.vehicleType],
+    };
+  }
+
+  if (queryParams.vehicleClass) {
+    constructedQuery.vehicleClass = {
+      $in: Array.isArray(queryParams.vehicleClass)
+        ? queryParams.vehicleClass
+        : [queryParams.vehicleClass],
+    };
+  }
+
+  if (queryParams.rating) {
+    constructedQuery["ratings.averageRating"] = {
+      $gte: parseInt(queryParams.rating),
+    };
+  }
+
+  if (queryParams.reviews) {
+    constructedQuery["ratings.numberOfRatings"] = {
+      $gte: parseInt(queryParams.reviews),
+    };
+  }
 
   return constructedQuery;
 };
