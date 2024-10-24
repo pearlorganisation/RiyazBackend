@@ -8,7 +8,11 @@ import { uploadFileToCloudinary } from "../../configs/cloudinary/cloudinary.js";
 export const createVehicle = asyncHandler(async (req, res, next) => {
   const images = req.files;
   const response = await uploadFileToCloudinary(images);
-  const vehicle = await Vehicle.create({ ...req.body, images: response });
+  const vehicle = await Vehicle.create({
+    ...req.body,
+    ratings: req.body.ratings ? JSON.parse(req.body.ratings) : null,
+    images: response,
+  });
   if (!vehicle) {
     return next(new ApiErrorResponse("Vehicle not created", 400));
   }
