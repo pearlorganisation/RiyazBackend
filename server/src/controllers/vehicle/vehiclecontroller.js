@@ -37,22 +37,23 @@ export const getSingleVehicle = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const getAllVehicles = asyncHandler(async (req, res, next) => {
-  const vehicles = await Vehicle.find();
-  if (!vehicles) {
-    return next(new ApiErrorResponse("Vehicle not found", 404));
-  }
-  return res.status(200).json({
-    success: true,
-    message: "Vehicles retrieved successfully",
-    data: vehicles,
-  });
-});
+// export const getAllVehicles = asyncHandler(async (req, res, next) => {
+//   const vehicles = await Vehicle.find();
+//   if (!vehicles) {
+//     return next(new ApiErrorResponse("Vehicle not found", 404));
+//   }
+//   return res.status(200).json({
+//     success: true,
+//     message: "Vehicles retrieved successfully",
+//     data: vehicles,
+//   });
+// });
 
-export const searchVehicle = asyncHandler(async (req, res, next) => {
+export const getAllVehicles = asyncHandler(async (req, res, next) => {
   //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
+  console.log(queryObj);
 
   // console.log("fdsjk", queryObj);
   // console.log("-- ", req.query.sortBy);
