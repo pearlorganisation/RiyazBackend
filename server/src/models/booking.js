@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  vehicles: {
+  bookingId: { type: String, required: true, unique: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vehicle",
     required: true,
