@@ -19,11 +19,31 @@ const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  })
+  cors(
+    process.env.NODE_ENV === "production"
+      ? {
+          origin: [
+            "http://localhost:4112",
+            "http://localhost:5010",
+            "*",
+            "https://riyaz-frontend.vercel.app",
+          ],
+          credentials: true,
+        }
+      : {
+          origin: [
+            "http://localhost:4112",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "*",
+          ],
+          methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+          allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+          credentials: true,
+          maxAge: 600,
+          exposedHeaders: ["*", "Authorization"],
+        }
+  )
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
