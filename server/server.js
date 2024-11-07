@@ -7,7 +7,7 @@ import morgan from "morgan";
 import { connectToMongoDB } from "./src/configs/db/connectToMongoDB.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
-import vehicleRoutes from "./src/routes/vehicleRoutes.js";
+import { vehicleRoutes } from "./src/routes/vehicleRoutes.js";
 import reviewRoutes from "./src/routes/reviewRoutes.js";
 import contactRoutes from "./src/routes/contactRoutes.js";
 import { error } from "./src/middleware/error.js";
@@ -19,11 +19,31 @@ const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use(
-  cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"], // Allow requests from this origin
-    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
-    credentials: true,
-  })
+  cors(
+    process.env.NODE_ENV === "production"
+      ? {
+          origin: [
+            "http://localhost:4112",
+            "http://localhost:5010",
+            "*",
+            "https://riyaz-frontend.vercel.app",
+          ],
+          credentials: true,
+        }
+      : {
+          origin: [
+            "http://localhost:4112",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "*",
+          ],
+          methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+          allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+          credentials: true,
+          maxAge: 600,
+          exposedHeaders: ["*", "Authorization"],
+        }
+  )
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -31,6 +51,11 @@ app.use(morgan("dev"));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
+
+app.get("/", (req, res) => {
+  res.status(200).send("API Works!");
+  console.log("This is Home route");
+});
 
 // Routes Declaration
 app.use("/api/v1/auth", authRoutes);
