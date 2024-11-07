@@ -9,6 +9,7 @@ import authRoutes from "./src/routes/authRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import vehicleRoutes from "./src/routes/vehicleRoutes.js";
 import reviewRoutes from "./src/routes/reviewRoutes.js";
+import contactRoutes from "./src/routes/contactRoutes.js";
 import { error } from "./src/middleware/error.js";
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/vehicles", vehicleRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
+app.use("/api/v1/contacts", contactRoutes);
 
 app.use(error);
 

@@ -8,7 +8,11 @@ import { uploadFileToCloudinary } from "../../configs/cloudinary/cloudinary.js";
 export const createVehicle = asyncHandler(async (req, res, next) => {
   const images = req.files;
   const response = await uploadFileToCloudinary(images);
-  const vehicle = await Vehicle.create({ ...req.body, images: response });
+  const vehicle = await Vehicle.create({
+    ...req.body,
+    ratings: req.body.ratings ? JSON.parse(req.body.ratings) : null,
+    images: response,
+  });
   if (!vehicle) {
     return next(new ApiErrorResponse("Vehicle not created", 400));
   }
@@ -33,22 +37,23 @@ export const getSingleVehicle = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const getAllVehicles = asyncHandler(async (req, res, next) => {
-  const vehicles = await Vehicle.find();
-  if (!vehicles) {
-    return next(new ApiErrorResponse("Vehicle not found", 404));
-  }
-  return res.status(200).json({
-    success: true,
-    message: "Vehicles retrieved successfully",
-    data: vehicles,
-  });
-});
+// export const getAllVehicles = asyncHandler(async (req, res, next) => {
+//   const vehicles = await Vehicle.find();
+//   if (!vehicles) {
+//     return next(new ApiErrorResponse("Vehicle not found", 404));
+//   }
+//   return res.status(200).json({
+//     success: true,
+//     message: "Vehicles retrieved successfully",
+//     data: vehicles,
+//   });
+// });
 
-export const searchVehicle = asyncHandler(async (req, res, next) => {
+export const getAllVehicles = asyncHandler(async (req, res, next) => {
   //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
+  console.log(queryObj);
 
   // console.log("fdsjk", queryObj);
   // console.log("-- ", req.query.sortBy);

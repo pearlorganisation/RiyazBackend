@@ -31,3 +31,50 @@ export const uploadFileToCloudinary = async (files) => {
     throw new Error(error.message);
   }
 };
+
+export const deleteFileFromCloudinary = async (files) => {
+  const publicIds = Array.isArray(files)
+    ? files.map((file) => file.public_id) // Map public_id from the array
+    : [files.public_id]; // If single object, wrap public_id in an array
+
+  try {
+    // Delete multiple files from Cloudinary using async/await
+    const deleteResults = await Promise.all(
+      publicIds.map(async (publicId) => {
+        try {
+          const result = await cloudinary.uploader.destroy(publicId);
+          console.log(
+            `File with public_id ${publicId} deleted from Cloudinary`
+          );
+          return { publicId, result }; // Return result for each file
+        } catch (error) {
+          console.error(
+            `Error deleting file with public_id: ${publicId}:`,
+            error
+          );
+          return { publicId, error: error.message || "Deletion failed" }; // Return error for each file
+        }
+      })
+    );
+    console.log("Deleted Result: ", deleteResults);
+    // Check if there were any errors
+    const failedDeletes = deleteResults.filter((res) => res.error); // response when deletion failed = {"result": "", "error": {}}
+    if (failedDeletes.length > 0) {
+      console.log("Failded deletes Response: ", failedDeletes);
+      return {
+        success: false,
+        message: "Some files failed to delete",
+        failedDeletes,
+      };
+    }
+
+    return { success: true, result: deleteResults };
+  } catch (error) {
+    console.error("Error during Cloudinary deletion process:", error);
+    return {
+      success: false,
+      message: "Error during Cloudinary deletion",
+      error: error.message,
+    };
+  }
+};
