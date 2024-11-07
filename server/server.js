@@ -52,6 +52,11 @@ app.use(morgan("dev"));
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
+app.get("/", (req, res) => {
+  res.status(200).send("API Works!");
+  console.log("This is Home route");
+});
+
 // Routes Declaration
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
