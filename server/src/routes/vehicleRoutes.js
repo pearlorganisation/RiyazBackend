@@ -18,4 +18,4 @@ router
 router.route("/:id").get(getSingleVehicle);
 router.route("/:id/reviews").get(getAllReviews);
 
-export default router;
+export const vehicleRoutes = router;
