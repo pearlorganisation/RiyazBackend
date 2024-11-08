@@ -23,7 +23,6 @@ export const createVehicle = asyncHandler(async (req, res, next) => {
 
 export const getSingleVehicle = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-
   validateMongodbID(id);
 
   const vehicle = await Vehicle.findById(id);
