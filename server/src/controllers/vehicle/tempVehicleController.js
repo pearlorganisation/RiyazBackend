@@ -6,7 +6,7 @@ import Review from "../../models/review.js";
 import { uploadFileToCloudinary } from "../../configs/cloudinary/cloudinary.js";
 
 export const createVehicle = asyncHandler(async (req, res, next) => {
-  const images = req.files;
+  const images = req.files; 
   const response = await uploadFileToCloudinary(images);
   const vehicle = await Vehicle.create({
     ...req.body,

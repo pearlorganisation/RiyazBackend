@@ -6,7 +6,7 @@ import {
   getAllReviews,
   getAllVehicles,
   getSingleVehicle,
-} from "../controllers/vehicle/vehicleController.js";
+} from "../controllers/vehicle/tempVehicleController.js";
 
 const router = express.Router();
 
