@@ -6,7 +6,7 @@ dotenv.config();
 const stripe = new Stripe(`${process.env.STRIPE_API_SECRET}`);
 
 export const createBooking = asyncHandler(async(req,res,next)=>{
-   const {amount} = req.body;
+   const { amount } = req.body;
     console.log(amount, "amount received");
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -29,3 +29,5 @@ export const createBooking = asyncHandler(async(req,res,next)=>{
         id: session.id
     })
 })
+
+ 
