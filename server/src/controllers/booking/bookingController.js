@@ -10,6 +10,7 @@ const stripe = new Stripe(`${process.env.STRIPE_API_SECRET}`);
 export const createBooking = asyncHandler(async(req,res,next)=>{
    const { products, price, numPeople, userInfo } = req.body;
  console.log("user info", userInfo);
+
     const booking = await Booking.create({
         bookingId: `BID_${nanoid(8)}${Date.now()}`,
         user: userInfo?._id,
@@ -61,9 +62,11 @@ export const verifyPayment = asyncHandler(async(req,res)=>{
 
     if(session.payment_status === "paid"){
         const booking = await Booking.findByIdAndUpdate(bookingId,{
+            $set:{
             paymentStatus: "paid",
             bookingStatus: "confirmed",
-            updatedAt: new Date()
+            // updatedAt: new Date()
+            }
         },
     {
         new: true
