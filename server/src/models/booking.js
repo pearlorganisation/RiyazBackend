@@ -11,7 +11,7 @@ const bookingSchema = new mongoose.Schema({
   totalPrice: {
     type: Number,
     required: true,
-  },
+  },                                            
   bookingDate: {
     type: Date,
     default: Date.now(),
@@ -19,14 +19,14 @@ const bookingSchema = new mongoose.Schema({
   },
   bookingStatus: {
     type: String,
-    enum: ["Pending", "Confirmed", "Cancelled"],
-    default: "Pending",
+    enum: ["pending", "confirmed", "cancelled"],
+    default: "pending",
     required: true,
   },
   paymentStatus: {
     type: String,
-    enum: ["Paid", "Unpaid"],
-    default: "Unpaid",
+    enum: ["paid", "unpaid"],
+    default: "unpaid",
     required: true,
   },
 });
