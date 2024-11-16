@@ -190,3 +190,18 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json({ success: true, message: data }, 200);
 });
+
+export const getAllUsers = asyncHandler(async (req, res, next) => {
+  const users = await User.find(); // Fetch all users from the database
+
+  if (!users || users.length === 0) {
+    // If no users found, return an error response
+    return next(new ApiErrorResponse("No users found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "All users found successfully",
+    data: users,
+  });
+});

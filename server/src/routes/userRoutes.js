@@ -6,6 +6,7 @@ import {
   resetPassword,
   getAuthenticatedUser,
   updateProfile,
+  getAllUsers,
 } from "../controllers/user/userController.js";
 import { verifyToken } from "../middleware/authMidleware.js";
 const router = express.Router();
@@ -18,4 +19,6 @@ router
   .route("/profile")
   .get(verifyToken, getAuthenticatedUser)
   .put(verifyToken, updateProfile);
+
+router.route("/").get(getAllUsers);
 export default router;
