@@ -85,3 +85,18 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     });
   }
 });
+
+export const getAllBookings = asyncHandler(async (req, res, next) => {
+  const bookings = await Booking.find();
+
+  if (!bookings || bookings.length === 0) {
+    // If no users found, return an error response
+    return next(new ApiErrorResponse("No bookings found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "All users found successfully",
+    data: bookings,
+  });
+});

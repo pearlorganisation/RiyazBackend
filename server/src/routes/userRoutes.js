@@ -21,4 +21,5 @@ router
   .put(verifyToken, updateProfile);
 
 router.route("/").get(getAllUsers);
+
 export default router;

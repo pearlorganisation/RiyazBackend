@@ -64,7 +64,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/vehicles", vehicleRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/contacts", contactRoutes);
-app.use("/api/v1/booking", bookingRoute);
+app.use("/api/v1/bookings", bookingRoute);
 app.use(error);
 
 connectToMongoDB()
