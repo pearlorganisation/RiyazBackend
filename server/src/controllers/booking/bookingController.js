@@ -3,6 +3,8 @@ import Stripe from "stripe";
 import dotenv from "dotenv";
 import Booking from "../../models/booking.js";
 import { nanoid } from "nanoid";
+import { paginate } from "../../utils/pagination.js";
+import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 dotenv.config();
 
 const stripe = new Stripe(`${process.env.STRIPE_API_SECRET}`);
@@ -87,16 +89,31 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 });
 
 export const getAllBookings = asyncHandler(async (req, res, next) => {
-  const bookings = await Booking.find();
+  const page = parseInt(req.query.page || "1");
+  const limit = parseInt(req.query.limit || "10");
 
+  // Set up filter object if necessary
+  const filter = {}; // 🔴----No filter yet-----
+
+  // Use the pagination utility function
+  const { data: bookings, pagination } = await paginate(
+    Booking, // The model
+    page, // Current page
+    limit, // Limit per page
+    [{ path: "user", select: "name mobileNumber" }, { path: "vehicle" }], // 🔴Need to reduce data for listin bookings only show requied data
+    filter // Any filtering conditions
+  );
+
+  // Check if no bookings are found
   if (!bookings || bookings.length === 0) {
-    // If no users found, return an error response
     return next(new ApiErrorResponse("No bookings found", 404));
   }
 
-  res.status(200).json({
+  // Return paginated response with ApiResponse
+  return res.status(200).json({
     success: true,
-    message: "All users found successfully",
+    message: "Bookings fetched successfully",
     data: bookings,
+    pagination,
   });
 });

@@ -13,7 +13,7 @@ const router = express.Router();
 router
   .route("/")
   .post(upload.array("images", 5), createVehicle)
-  .get(getAllVehicles);
+  .get(getAllVehicles); //searching, filtering, and sorting also implemented
 
 router.route("/:id").get(getSingleVehicle);
 router.route("/:id/reviews").get(getAllReviews);
