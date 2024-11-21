@@ -192,7 +192,7 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find(); // Fetch all users from the database
+  const users = await User.find().select("-password -refreshToken"); // Fetch all users from the database
 
   if (!users || users.length === 0) {
     // If no users found, return an error response
