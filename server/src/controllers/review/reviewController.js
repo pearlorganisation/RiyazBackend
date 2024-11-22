@@ -100,3 +100,19 @@ export const deleteReviewById = asyncHandler(async (req, res, next) => {
     message: "Review deleted successfully.",
   });
 });
+
+
+// get all reviews for the admin
+export const getAllReviews = asyncHandler(async(req,res,next)=>{
+  const data = await Review.find().populate("vehicleId").populate({
+    path: "userId",
+    select: "-password -refreshToken"
+  })
+  if(!data){
+    return next(new ApiErrorResponse("Failed to get the reviews", 404))
+  }res.status(200).json({
+    success: true,
+    message:"Reviews received successfully",
+    data:data
+  })
+})
