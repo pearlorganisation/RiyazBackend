@@ -3,7 +3,8 @@ export const paginate = async (
   page = 1,
   limit = 5,
   populateOptions = [],
-  filter = {} // Optional filter parameter
+  filter = {}, // Optional filter parameter
+  sortBy = { createdAt: -1 } // Default sorting: Newest first
 ) => {
   const skip = (page - 1) * limit;
 
@@ -11,11 +12,7 @@ export const paginate = async (
   const totalDocuments = await model.countDocuments(filter);
 
   // Fetch paginated data with filtering and optional population
-  let query = model
-    .find(filter)
-    .skip(skip)
-    .limit(limit)
-    .sort();
+  let query = model.find(filter).skip(skip).limit(limit).sort(sortBy);
   if (populateOptions.length > 0) {
     populateOptions.forEach((option) => {
       query = query.populate(option);

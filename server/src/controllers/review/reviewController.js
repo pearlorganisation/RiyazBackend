@@ -105,9 +105,27 @@ export const deleteReviewById = asyncHandler(async (req, res, next) => {
 export const getAllReviews = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page || "1"); // Current page
   const limit = parseInt(req.query.limit || "10"); // Limit per page
+  const sortByParam = req.query.sortBy || "newest"; // Default: Newest first
 
+  // Determine sorting order based on sortBy using switch case
+  let sortBy;
+
+  switch (sortByParam) {
+    case "highest":
+      sortBy = { rating: -1 }; // Highest rating first
+      break;
+    case "newest":
+      sortBy = { createdAt: -1 }; // Newest first
+      break;
+    case "oldest":
+      sortBy = { createdAt: 1 }; // Oldest first
+      break;
+    default:
+      sortBy = { createdAt: -1 }; // Default: Newest first
+      break;
+  }
   // Set up filter object if needed
-  const filter = {}; 
+  const filter = {};
   if (req.query?.rating) {
     filter.rating = {
       $gte: parseInt(req.query.rating),
@@ -122,8 +140,8 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
       { path: "vehicleId" }, // Populate vehicleId
       { path: "userId", select: "-password -refreshToken" }, // Populate userId with selected fields
     ],
-    filter // Any filtering conditions
-    
+    filter, // Any filtering conditions
+    sortBy
   );
 
   // Check if no reviews are found
