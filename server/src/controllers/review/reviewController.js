@@ -3,6 +3,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Review from "../../models/review.js";
 import Vehicle from "../../models/vehicle.js";
 import { calculateAverageRating } from "../../utils/ratingHelper.js";
+import { paginate } from "../../utils/pagination.js";
 
 // Create a Review
 export const createReview = asyncHandler(async (req, res, next) => {
@@ -101,18 +102,40 @@ export const deleteReviewById = asyncHandler(async (req, res, next) => {
   });
 });
 
+export const getAllReviews = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page || "1"); // Current page
+  const limit = parseInt(req.query.limit || "10"); // Limit per page
 
-// get all reviews for the admin
-export const getAllReviews = asyncHandler(async(req,res,next)=>{
-  const data = await Review.find().populate("vehicleId").populate({
-    path: "userId",
-    select: "-password -refreshToken"
-  })
-  if(!data){
-    return next(new ApiErrorResponse("Failed to get the reviews", 404))
-  }res.status(200).json({
+  // Set up filter object if needed
+  const filter = {}; 
+  if (req.query?.rating) {
+    filter.rating = {
+      $gte: parseInt(req.query.rating),
+    };
+  }
+  // Use the pagination utility function
+  const { data: reviews, pagination } = await paginate(
+    Review, // The model
+    page, // Current page
+    limit, // Limit per page
+    [
+      { path: "vehicleId" }, // Populate vehicleId
+      { path: "userId", select: "-password -refreshToken" }, // Populate userId with selected fields
+    ],
+    filter // Any filtering conditions
+    
+  );
+
+  // Check if no reviews are found
+  if (!reviews || reviews.length === 0) {
+    return next(new ApiErrorResponse("No reviews found", 404));
+  }
+
+  // Return paginated response
+  return res.status(200).json({
     success: true,
-    message:"Reviews received successfully",
-    data:data
-  })
-})
+    message: "Reviews fetched successfully",
+    data: reviews,
+    pagination, // Include pagination metadata
+  });
+});

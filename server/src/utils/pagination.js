@@ -15,7 +15,7 @@ export const paginate = async (
     .find(filter)
     .skip(skip)
     .limit(limit)
-    .sort({ publishedAt: -1 });
+    .sort();
   if (populateOptions.length > 0) {
     populateOptions.forEach((option) => {
       query = query.populate(option);

@@ -14,4 +14,5 @@ router.route("/:reviewId").put(updateReviewById).delete(deleteReviewById);
 
 /*----------------------------------To get all the reviews for the admin-----------------------------------------------*/
 router.route("/allreviews").get(getAllReviews);
+
 export default router;
