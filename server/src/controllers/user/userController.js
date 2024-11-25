@@ -5,6 +5,7 @@ import { COOKIE_OPTIONS } from "../../../constants.js";
 import ApiErrorResponse from "../../utils/ApiErrorResponse.js";
 import { sendForgotPasswordMail } from "../../utils/email/emailTemplates.js";
 import { z } from "zod";
+import { paginate } from "../../utils/pagination.js";
 
 export const refreshAccessToken = asyncHandler(async (req, res, next) => {
   const clientRefreshToken = req.cookies.refresh_token;
@@ -192,16 +193,30 @@ export const updateProfile = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find().select("-password -refreshToken"); // Fetch all users from the database
+  const page = parseInt(req.query.page || "1"); // Current page
+  const limit = parseInt(req.query.limit || "10"); // Limit per page
 
+  // Use the pagination utility function
+  const { data: users, pagination } = await paginate(
+    User, // The model
+    page, // Current page
+    limit, // Limit per page
+    [], // No populate options
+    {}, // No filter options
+    { createdAt: -1 }, // Sort by newest first (optional)
+    "-password -refreshToken"
+  );
+
+  // Check if no users are found
   if (!users || users.length === 0) {
-    // If no users found, return an error response
     return next(new ApiErrorResponse("No users found", 404));
   }
 
-  res.status(200).json({
+  // Return paginated response
+  return res.status(200).json({
     success: true,
     message: "All users found successfully",
     data: users,
+    pagination, // Include pagination metadata
   });
 });

@@ -107,9 +107,16 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit || "10"); // Limit per page
   const sortByParam = req.query.sortBy || "newest"; // Default: Newest first
 
+  // Set up filter object if needed
+  const filter = {};
+  if (req.query?.rating) {
+    filter.rating = {
+      $gte: parseInt(req.query.rating),
+    };
+  }
+
   // Determine sorting order based on sortBy using switch case
   let sortBy;
-
   switch (sortByParam) {
     case "highest":
       sortBy = { rating: -1 }; // Highest rating first
@@ -124,13 +131,7 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
       sortBy = { createdAt: -1 }; // Default: Newest first
       break;
   }
-  // Set up filter object if needed
-  const filter = {};
-  if (req.query?.rating) {
-    filter.rating = {
-      $gte: parseInt(req.query.rating),
-    };
-  }
+
   // Use the pagination utility function
   const { data: reviews, pagination } = await paginate(
     Review, // The model
