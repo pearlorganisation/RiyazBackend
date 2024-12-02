@@ -10,7 +10,7 @@ import userRoutes from "./src/routes/userRoutes.js";
 import vehicleRoutes from "./src/routes/vehicleRoutes.js";
 import reviewRoutes from "./src/routes/reviewRoutes.js";
 import contactRoutes from "./src/routes/contactRoutes.js";
-import bookingRoute from "./src/routes/bookingRoutes.js";
+import  bookingRoute from "./src/routes/bookingRoutes.js";
 import { error } from "./src/middleware/error.js";
 
 dotenv.config();
