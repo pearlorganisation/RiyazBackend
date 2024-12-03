@@ -3,6 +3,7 @@ import express from "express";
 import { upload } from "../middleware/multer.js";
 import {
   createVehicle,
+  deleteVehicle,
   getAllReviews,
   getAllVehicles,
   getSingleVehicle,
@@ -15,7 +16,7 @@ router
   .post(upload.array("images", 5), createVehicle)
   .get(getAllVehicles); //searching, filtering, and sorting also implemented
 
-router.route("/:id").get(getSingleVehicle);
+router.route("/:id").get(getSingleVehicle).delete(deleteVehicle);
 router.route("/:id/reviews").get(getAllReviews);
 
 export default router;

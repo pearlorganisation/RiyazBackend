@@ -170,3 +170,17 @@ const constructVehicleSearchQuery = (queryParams) => {
 
   return constructedQuery;
 };
+
+
+/**------------------------------To Delete the vehicle---------------------*/
+
+export const deleteVehicle = asyncHandler(async(req,res,next)=>{
+  const data = await Vehicle.findByIdAndDelete(req.params.id)
+  if(!data){
+    return next(new ApiErrorResponse("Vehicle Deleted Successfully",404))
+  }
+  return res.status(200).json({
+    success: true,
+    message:"Vehicle Deleted Successfully"
+  })
+})
