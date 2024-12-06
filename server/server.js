@@ -11,6 +11,7 @@ import vehicleRoutes from "./src/routes/vehicleRoutes.js";
 import reviewRoutes from "./src/routes/reviewRoutes.js";
 import contactRoutes from "./src/routes/contactRoutes.js";
 import bookingRoute from "./src/routes/bookingRoutes.js";
+import dashboardRouter from "./src/routes/dashboardRoutes.js";
 import { error } from "./src/middleware/error.js";
 
 dotenv.config();
@@ -65,6 +66,7 @@ app.use("/api/v1/vehicles", vehicleRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/contacts", contactRoutes);
 app.use("/api/v1/bookings", bookingRoute);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 app.use(error);
 
