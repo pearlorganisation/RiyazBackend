@@ -18,13 +18,8 @@ const signupSchema = z.object({
     .regex(/^\d{10}$/, "Mobile number must contain only digits"),
 });
 
-//SIGNUP Controller
 export const signup = asyncHandler(async (req, res, next) => {
   const { name, email, password, mobileNumber } = req.body;
-  //  if (!name || !email || !password || !mobileNumber) {
-  //    return next(new ApiErrorResponse("All fields are required", 400));
-  //  }
-
   try {
     signupSchema.parse({ name, email, password, mobileNumber });
   } catch (error) {
@@ -79,7 +74,6 @@ export const verifySignupToken = asyncHandler(async (req, res, next) => {
   return res.redirect(`${process.env.FRONTEND_LOGIN_PAGE_URL}`);
 });
 
-//LOGIN Controller
 export const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req?.body;
   if (!email || !password) {
@@ -113,7 +107,6 @@ export const login = asyncHandler(async (req, res, next) => {
     .json({ success: true, message: "Logged in successfully" });
 });
 
-// LOGOUT Controller
 export const logout = async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
