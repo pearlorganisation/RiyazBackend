@@ -187,3 +187,37 @@ const constructVehicleSearchQuery = (queryParams) => {
 
   return constructedQuery;
 };
+
+/**---------------------------------for updating a  vehicle---------------------------------*/
+export const updateVehicleById = asyncHandler(async(req,res,next)=>{
+  const id  = req.params.id;
+  console.log('-------------requested body',req.body)
+  const images = req.files
+  const existingVehicle = await Vehicle.findById(id)
+  if(!existingVehicle){
+        return next(new ApiErrorResponse("Vehicle does not exist", 404));
+  }
+  let uploadedImages;
+  if(images){
+      uploadedImages = await uploadFileToCloudinary(images);
+  }
+ const updatedVehicle = await Vehicle.findByIdAndUpdate(
+   req.params.id, {
+     ...req.body,
+     images: uploadedImages,
+   }, {
+     new: true,
+     runValidators: true,
+   }
+ );
+
+ if (!updatedVehicle) {
+   return next(new ApiErrorResponse("Vehicle not found or not updated", 404));
+ }
+
+ return res.status(200).json({
+   success: true,
+   message: "Vehicle updated successfully",
+   data: updatedVehicle,
+ });
+})

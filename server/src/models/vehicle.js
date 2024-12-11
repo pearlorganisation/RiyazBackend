@@ -62,11 +62,11 @@ const vehicleSchema = new mongoose.Schema(
     },
     pickupDate: {
       type: Date,
-      required: true,
+      // required: true,
     },
     pickupTime: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   { timestamps: true }

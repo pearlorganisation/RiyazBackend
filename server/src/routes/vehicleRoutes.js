@@ -7,7 +7,9 @@ import {
   getAllReviews,
   getAllVehicles,
   getSingleVehicle,
+  updateVehicleById,
 } from "../controllers/vehicle/vehicleController.js";
+import fileParser from "../utils/fileParser.js";
 
 const router = express.Router();
 
@@ -16,7 +18,7 @@ router
   .post(upload.array("images", 5), createVehicle)
   .get(getAllVehicles); //searching, filtering, and sorting also implemented
 
-router.route("/:id").get(getSingleVehicle).delete(deleteVehicleById);
+router.route("/:id").patch(upload.array("images",5),updateVehicleById).get(getSingleVehicle).delete(deleteVehicleById);
 router.route("/:id/reviews").get(getAllReviews);
 
 export default router;
