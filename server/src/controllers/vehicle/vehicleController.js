@@ -126,6 +126,30 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
   });
 });
 
+// const sanitizeQueryParams = (queryParams) => {
+//   const sanitizedQuery = {};
+
+//   const sanitizeValue = (value) => {
+//     const allowedRegex = /^[a-zA-Z0-9 ,\-_.]*$/; // Allows alphanumeric, spaces, commas, hyphens, underscores, and periods.
+//     return allowedRegex.test(value) ? value : null;
+//   };
+
+//   for (let key in queryParams) {
+//     if (Array.isArray(queryParams[key])) {
+//       sanitizedQuery[key] = queryParams[key]
+//         .map((val) => sanitizeValue(val))
+//         .filter((val) => val !== null); // Filter out invalid values.
+//     } else {
+//       const sanitizedValue = sanitizeValue(queryParams[key]);
+//       if (sanitizedValue !== null) {
+//         sanitizedQuery[key] = sanitizedValue;
+//       }
+//     }
+//   }
+
+//   return sanitizedQuery;
+// };
+
 // Helper function to construct search query based on request parameters
 const constructVehicleSearchQuery = (queryParams) => {
   let constructedQuery = {};
