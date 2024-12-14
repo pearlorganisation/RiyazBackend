@@ -40,7 +40,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
   //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
-  console.log(queryObj);
+  console.log('--------------------------------',req.query);
 
   // console.log("fdsjk", queryObj);
   // console.log("-- ", req.query.sortBy);
@@ -150,20 +150,26 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
 //   return sanitizedQuery;
 // };
 
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters
+};
 // Helper function to construct search query based on request parameters
 const constructVehicleSearchQuery = (queryParams) => {
   let constructedQuery = {};
 
-  if (queryParams.pickupLocation) {
-    constructedQuery.pickupLocation = new RegExp(
-      queryParams.pickupLocation,
-      "i"
-    );
-  }
+ if (queryParams.pickupLocation) {
+   constructedQuery.pickupLocation = new RegExp(
+     escapeRegExp(queryParams.pickupLocation),
+     "i"
+   );
+ }
 
-  if (queryParams.destination) {
-    constructedQuery.destination = new RegExp(queryParams.destination, "i");
-  }
+ if (queryParams.destination) {
+   constructedQuery.destination = new RegExp(
+     escapeRegExp(queryParams.destination),
+     "i"
+   );
+ }
 
   if (queryParams.pickupDate) {
     constructedQuery.pickupDate = queryParams.pickupDate;
