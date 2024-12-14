@@ -40,7 +40,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
   //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
-  console.log('--------------------------------',req.query);
+  console.log("--------------------------------", req.query);
 
   // console.log("fdsjk", queryObj);
   // console.log("-- ", req.query.sortBy);
@@ -126,30 +126,6 @@ export const getAllReviews = asyncHandler(async (req, res, next) => {
   });
 });
 
-// const sanitizeQueryParams = (queryParams) => {
-//   const sanitizedQuery = {};
-
-//   const sanitizeValue = (value) => {
-//     const allowedRegex = /^[a-zA-Z0-9 ,\-_.]*$/; // Allows alphanumeric, spaces, commas, hyphens, underscores, and periods.
-//     return allowedRegex.test(value) ? value : null;
-//   };
-
-//   for (let key in queryParams) {
-//     if (Array.isArray(queryParams[key])) {
-//       sanitizedQuery[key] = queryParams[key]
-//         .map((val) => sanitizeValue(val))
-//         .filter((val) => val !== null); // Filter out invalid values.
-//     } else {
-//       const sanitizedValue = sanitizeValue(queryParams[key]);
-//       if (sanitizedValue !== null) {
-//         sanitizedQuery[key] = sanitizedValue;
-//       }
-//     }
-//   }
-
-//   return sanitizedQuery;
-// };
-
 const escapeRegExp = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escapes special characters
 };
@@ -157,19 +133,19 @@ const escapeRegExp = (string) => {
 const constructVehicleSearchQuery = (queryParams) => {
   let constructedQuery = {};
 
- if (queryParams.pickupLocation) {
-   constructedQuery.pickupLocation = new RegExp(
-     escapeRegExp(queryParams.pickupLocation),
-     "i"
-   );
- }
+  if (queryParams.pickupLocation) {
+    constructedQuery.pickupLocation = new RegExp(
+      escapeRegExp(queryParams.pickupLocation),
+      "i"
+    );
+  }
 
- if (queryParams.destination) {
-   constructedQuery.destination = new RegExp(
-     escapeRegExp(queryParams.destination),
-     "i"
-   );
- }
+  if (queryParams.destination) {
+    constructedQuery.destination = new RegExp(
+      escapeRegExp(queryParams.destination),
+      "i"
+    );
+  }
 
   if (queryParams.pickupDate) {
     constructedQuery.pickupDate = queryParams.pickupDate;
@@ -219,35 +195,37 @@ const constructVehicleSearchQuery = (queryParams) => {
 };
 
 /**---------------------------------for updating a  vehicle---------------------------------*/
-export const updateVehicleById = asyncHandler(async(req,res,next)=>{
-  const id  = req.params.id;
-  console.log('-------------requested body',req.body)
-  const images = req.files
-  const existingVehicle = await Vehicle.findById(id)
-  if(!existingVehicle){
-        return next(new ApiErrorResponse("Vehicle does not exist", 404));
+export const updateVehicleById = asyncHandler(async (req, res, next) => {
+  const id = req.params.id;
+  console.log("-------------requested body", req.body);
+  const images = req.files;
+  const existingVehicle = await Vehicle.findById(id);
+  if (!existingVehicle) {
+    return next(new ApiErrorResponse("Vehicle does not exist", 404));
   }
   let uploadedImages;
-  if(images){
-      uploadedImages = await uploadFileToCloudinary(images);
+  if (images) {
+    uploadedImages = await uploadFileToCloudinary(images);
   }
- const updatedVehicle = await Vehicle.findByIdAndUpdate(
-   req.params.id, {
-     ...req.body,
-     images: uploadedImages,
-   }, {
-     new: true,
-     runValidators: true,
-   }
- );
+  const updatedVehicle = await Vehicle.findByIdAndUpdate(
+    req.params.id,
+    {
+      ...req.body,
+      images: uploadedImages,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
- if (!updatedVehicle) {
-   return next(new ApiErrorResponse("Vehicle not found or not updated", 404));
- }
+  if (!updatedVehicle) {
+    return next(new ApiErrorResponse("Vehicle not found or not updated", 404));
+  }
 
- return res.status(200).json({
-   success: true,
-   message: "Vehicle updated successfully",
-   data: updatedVehicle,
- });
-})
+  return res.status(200).json({
+    success: true,
+    message: "Vehicle updated successfully",
+    data: updatedVehicle,
+  });
+});
