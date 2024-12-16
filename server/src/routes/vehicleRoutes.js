@@ -9,8 +9,7 @@ import {
   getSingleVehicle,
   updateVehicleById,
 } from "../controllers/vehicle/vehicleController.js";
-import fileParser from "../utils/fileParser.js";
-
+ 
 const router = express.Router();
 
 router
