@@ -60,13 +60,9 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    pickupDate: {
-      type: Date,
-      // required: true,
-    },
-    pickupTime: {
-      type: String,
-      // required: true,
+    isAvailable: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }

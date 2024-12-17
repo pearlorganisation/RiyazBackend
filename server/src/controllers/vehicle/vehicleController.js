@@ -40,7 +40,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
   //console.log(req.query); //{} when no query send
   // Construct search query based on user input
   const queryObj = constructVehicleSearchQuery(req.query);
-  console.log('--------------------------------',req.query);
+  console.log("--------------------------------", req.query);
 
   // console.log("fdsjk", queryObj);
   // console.log("-- ", req.query.sortBy);
@@ -133,19 +133,19 @@ const escapeRegExp = (string) => {
 const constructVehicleSearchQuery = (queryParams) => {
   let constructedQuery = {};
 
- if (queryParams.pickupLocation) {
-   constructedQuery.pickupLocation = new RegExp(
-     escapeRegExp(queryParams.pickupLocation),
-     "i"
-   );
- }
+  if (queryParams.pickupLocation) {
+    constructedQuery.pickupLocation = new RegExp(
+      escapeRegExp(queryParams.pickupLocation),
+      "i"
+    );
+  }
 
- if (queryParams.destination) {
-   constructedQuery.destination = new RegExp(
-     escapeRegExp(queryParams.destination),
-     "i"
-   );
- }
+  if (queryParams.destination) {
+    constructedQuery.destination = new RegExp(
+      escapeRegExp(queryParams.destination),
+      "i"
+    );
+  }
 
   if (queryParams.pickupDate) {
     constructedQuery.pickupDate = queryParams.pickupDate;
@@ -195,35 +195,67 @@ const constructVehicleSearchQuery = (queryParams) => {
 };
 
 /**---------------------------------for updating a  vehicle---------------------------------*/
-export const updateVehicleById = asyncHandler(async(req,res,next)=>{
-  const id  = req.params.id;
-  console.log('-------------requested body',req.body)
-  const images = req.files
-  const existingVehicle = await Vehicle.findById(id)
-  if(!existingVehicle){
-        return next(new ApiErrorResponse("Vehicle does not exist", 404));
+export const updateVehicleById = asyncHandler(async (req, res, next) => {
+  const id = req.params.id;
+  console.log("-------------requested body", req.body);
+  const images = req.files;
+  const existingVehicle = await Vehicle.findById(id);
+  if (!existingVehicle) {
+    return next(new ApiErrorResponse("Vehicle does not exist", 404));
   }
   let uploadedImages;
-  if(images){
-      uploadedImages = await uploadFileToCloudinary(images);
+  if (images) {
+    uploadedImages = await uploadFileToCloudinary(images);
   }
- const updatedVehicle = await Vehicle.findByIdAndUpdate(
-   req.params.id, {
-     ...req.body,
-     images: uploadedImages,
-   }, {
-     new: true,
-     runValidators: true,
-   }
- );
+  const updatedVehicle = await Vehicle.findByIdAndUpdate(
+    req.params.id,
+    {
+      ...req.body,
+      images: uploadedImages,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
- if (!updatedVehicle) {
-   return next(new ApiErrorResponse("Vehicle not found or not updated", 404));
- }
+  if (!updatedVehicle) {
+    return next(new ApiErrorResponse("Vehicle not found or not updated", 404));
+  }
 
- return res.status(200).json({
-   success: true,
-   message: "Vehicle updated successfully",
-   data: updatedVehicle,
- });
-})
+  return res.status(200).json({
+    success: true,
+    message: "Vehicle updated successfully",
+    data: updatedVehicle,
+  });
+});
+
+export const toggleVehicleAvailability = asyncHandler(
+  async (req, res, next) => {
+    const { id } = req.params;
+
+    // Check if vehicleId is provided
+    if (!id) {
+      return next(new ApiErrorResponse("Vehicle ID is required", 400));
+    }
+
+    // Find the vehicle by ID
+    const vehicle = await Vehicle.findById(id);
+
+    if (!vehicle) {
+      return next(new ApiErrorResponse("Vehicle not found", 404));
+    }
+
+    // Toggle the isAvailable field
+    vehicle.isAvailable = !vehicle.isAvailable;
+
+    // Save the updated vehicle
+    await vehicle.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Vehicle availability toggled to ${vehicle.isAvailable}`,
+      data: vehicle,
+    });
+  }
+);
