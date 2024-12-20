@@ -91,10 +91,17 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 export const getAllBookings = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page || "1");
   const limit = parseInt(req.query.limit || "10");
+  const { bookingStatus, paymentStatus } = req.query;
 
-  // Set up filter object if necessary
-  const filter = {}; // 🔴----No filter yet-----
+  // Helper function to handle multiple selection
+  const handleMultiSelect = (value) =>
+    value ? { $in: value.split(",") } : undefined;
 
+  // can make helper function to make filter
+  const filter = {
+    ...(bookingStatus && { bookingStatus: handleMultiSelect(bookingStatus) }),
+    ...(paymentStatus && { paymentStatus: handleMultiSelect(paymentStatus) }),
+  };
   // Use the pagination utility function
   const { data: bookings, pagination } = await paginate(
     Booking, // The model
@@ -113,7 +120,7 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "Bookings fetched successfully",
-    data: bookings,
     pagination,
+    data: bookings,
   });
 });

@@ -37,14 +37,10 @@ export const getSingleVehicle = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllVehicles = asyncHandler(async (req, res, next) => {
-  //console.log(req.query); //{} when no query send
   // Construct search query based on user input
-  const queryObj = constructVehicleSearchQuery(req.query);
-  console.log("--------------------------------", req.query);
+  const queryObj = constructVehicleSearchQuery(req.query); // Filter and sorting work together - can make helper
 
-  // console.log("fdsjk", queryObj);
-  // console.log("-- ", req.query.sortBy);
-  const sortOption = {};
+  const sortOption = {}; // Sorting options - can make helper
   switch (req.query.sortBy) {
     case "price-asc":
       sortOption.price = 1;
@@ -60,9 +56,7 @@ export const getAllVehicles = asyncHandler(async (req, res, next) => {
       break;
   }
 
-  // console.log(sortOption, "Sorting queryyy");
-
-  // Pagination setup
+  // Pagination setup - OLD pagination
   const pageSize = parseInt(req.query.limit || "5");
   const pageNumber = parseInt(req.query.page || "1");
   const skip = (pageNumber - 1) * pageSize;

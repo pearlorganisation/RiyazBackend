@@ -63,32 +63,47 @@ export const getDashboardData = asyncHandler(async (req, res) => {
 
 export const getUserGrowth = asyncHandler(async (req, res) => {
   const periods = [
-    { name: 'daily', duration: 'day' },
-    { name: 'weekly', duration: 'week' },
-    { name: 'quarterly', duration: 'quarter' },
+    { name: "daily", duration: "day" },
+    { name: "weekly", duration: "week" },
+    { name: "quarterly", duration: "quarter" },
   ];
 
   const results = [];
 
   for (const period of periods) {
-    let currentPeriodStart, currentPeriodEnd, previousPeriodStart, previousPeriodEnd;
+    let currentPeriodStart,
+      currentPeriodEnd,
+      previousPeriodStart,
+      previousPeriodEnd;
 
-    if (period.name === 'daily') {
-      currentPeriodStart = moment().startOf('day').toDate();
-      previousPeriodStart = moment().subtract(1, 'day').startOf('day').toDate();
-      previousPeriodEnd = moment().subtract(1, 'day').endOf('day').toDate();
-    } else if (period.name === 'weekly') {
-      currentPeriodStart = moment().startOf('week').toDate();
-      previousPeriodStart = moment().subtract(1, 'week').startOf('week').toDate();
-      previousPeriodEnd = moment().subtract(1, 'week').endOf('week').toDate();
-    } else if (period.name === 'quarterly') {
-      currentPeriodStart = moment().startOf('quarter').toDate();
-      previousPeriodStart = moment().subtract(1, 'quarter').startOf('quarter').toDate();
-      previousPeriodEnd = moment().subtract(1, 'quarter').endOf('quarter').toDate();
+    if (period.name === "daily") {
+      currentPeriodStart = moment().startOf("day").toDate();
+      previousPeriodStart = moment().subtract(1, "day").startOf("day").toDate();
+      previousPeriodEnd = moment().subtract(1, "day").endOf("day").toDate();
+    } else if (period.name === "weekly") {
+      currentPeriodStart = moment().startOf("week").toDate();
+      previousPeriodStart = moment()
+        .subtract(1, "week")
+        .startOf("week")
+        .toDate();
+      previousPeriodEnd = moment().subtract(1, "week").endOf("week").toDate();
+    } else if (period.name === "quarterly") {
+      currentPeriodStart = moment().startOf("quarter").toDate();
+      previousPeriodStart = moment()
+        .subtract(1, "quarter")
+        .startOf("quarter")
+        .toDate();
+      previousPeriodEnd = moment()
+        .subtract(1, "quarter")
+        .endOf("quarter")
+        .toDate();
     }
 
     const currentPeriodUsers = await User.countDocuments({
-      createdAt: { $gte: currentPeriodStart, $lte: currentPeriodEnd || currentPeriodStart },
+      createdAt: {
+        $gte: currentPeriodStart,
+        $lte: currentPeriodEnd || currentPeriodStart,
+      },
     });
     const previousPeriodUsers = await User.countDocuments({
       createdAt: { $gte: previousPeriodStart, $lte: previousPeriodEnd },
@@ -97,7 +112,8 @@ export const getUserGrowth = asyncHandler(async (req, res) => {
     let growthPercentage = 0;
     if (previousPeriodUsers > 0) {
       growthPercentage =
-        ((currentPeriodUsers - previousPeriodUsers) / previousPeriodUsers) * 100;
+        ((currentPeriodUsers - previousPeriodUsers) / previousPeriodUsers) *
+        100;
     } else if (currentPeriodUsers > 0) {
       growthPercentage = 100; // 100% growth if there were no users in the previous period.
     }
