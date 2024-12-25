@@ -92,8 +92,8 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
     {
       expiresIn: "1d",
     }
-  ); 
-  await sendForgotPasswordMail(email, resetToken)
+  );
+  await sendForgotPasswordMail(email, resetToken, existingUser.role)
     .then(() => {
       return res.status(200).json({
         success: true,

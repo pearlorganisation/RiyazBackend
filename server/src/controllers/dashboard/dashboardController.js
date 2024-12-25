@@ -71,29 +71,29 @@ export const getUserGrowth = asyncHandler(async (req, res) => {
   const results = [];
 
   for (const period of periods) {
-    let currentPeriodStart,
+    let currentPeriodStart, // Start of the current period
       currentPeriodEnd,
-      previousPeriodStart,
+      previousPeriodStart, // Start of the previous period
       previousPeriodEnd;
 
     if (period.name === "daily") {
-      currentPeriodStart = moment().startOf("day").toDate();
-      previousPeriodStart = moment().subtract(1, "day").startOf("day").toDate();
-      previousPeriodEnd = moment().subtract(1, "day").endOf("day").toDate();
+      currentPeriodStart = moment().startOf("day").toDate(); // 2024-12-25 00:00:00
+      previousPeriodStart = moment().subtract(1, "day").startOf("day").toDate(); // 2024-12-24 00:00:00
+      previousPeriodEnd = moment().subtract(1, "day").endOf("day").toDate(); // 2024-12-24 23:59:59
     } else if (period.name === "weekly") {
-      currentPeriodStart = moment().startOf("week").toDate();
-      previousPeriodStart = moment()
+      currentPeriodStart = moment().startOf("week").toDate(); //2024-12-23 00:00:00
+      previousPeriodStart = moment() //2024-12-16 00:00:00
         .subtract(1, "week")
         .startOf("week")
         .toDate();
-      previousPeriodEnd = moment().subtract(1, "week").endOf("week").toDate();
+      previousPeriodEnd = moment().subtract(1, "week").endOf("week").toDate(); //2024-12-22 23:59:59
     } else if (period.name === "quarterly") {
-      currentPeriodStart = moment().startOf("quarter").toDate();
-      previousPeriodStart = moment()
+      currentPeriodStart = moment().startOf("quarter").toDate(); //2024-10-01 00:00:00
+      previousPeriodStart = moment() //2024-07-01 00:00:00
         .subtract(1, "quarter")
         .startOf("quarter")
         .toDate();
-      previousPeriodEnd = moment()
+      previousPeriodEnd = moment() //2024-09-30 23:59:59
         .subtract(1, "quarter")
         .endOf("quarter")
         .toDate();

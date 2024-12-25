@@ -99,7 +99,7 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
 
   // can make helper function to make filter
   const filter = {
-    ...(bookingStatus && { bookingStatus: handleMultiSelect(bookingStatus) }),
+    ...(bookingStatus && { bookingStatus: handleMultiSelect(bookingStatus) }), // More filter need to be addded
     ...(paymentStatus && { paymentStatus: handleMultiSelect(paymentStatus) }),
   };
   // Use the pagination utility function
