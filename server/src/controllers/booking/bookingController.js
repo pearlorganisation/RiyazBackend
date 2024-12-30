@@ -93,6 +93,21 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit || "10");
   const { bookingStatus, paymentStatus } = req.query;
 
+  const sortBy = {}; // Sorting options - can make helper
+  switch (req.query.sortBy) {
+    case "price-asc": // Price (Low to High)
+      sortBy.totalPrice = 1;
+      break;
+    case "price-desc": // Price (High to Low)
+      sortBy.totalPrice = -1;
+      break;
+    case "date-asc": // Date (Old to New)
+      sortBy.createdAt = 1;
+      break;
+    case "date-desc": // Date (New to Old)
+      sortBy.createdAt = -1;
+      break;
+  }
   // Helper function to handle multiple selection
   const handleMultiSelect = (value) =>
     value ? { $in: value.split(",") } : undefined;
@@ -108,7 +123,8 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
     page, // Current page
     limit, // Limit per page
     [{ path: "user", select: "name mobileNumber" }, { path: "vehicle" }], // 🔴Need to reduce data for listin bookings only show requied data
-    filter // Any filtering conditions
+    filter, // Any filtering conditions
+    sortBy
   );
 
   // Check if no bookings are found
