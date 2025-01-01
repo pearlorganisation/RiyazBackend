@@ -91,7 +91,7 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 export const getAllBookings = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page || "1");
   const limit = parseInt(req.query.limit || "10");
-  const { bookingStatus, paymentStatus } = req.query;
+  const { bookingStatus, paymentStatus, startDate, endDate } = req.query;
 
   const sortBy = {}; // Sorting options - can make helper
   switch (req.query.sortBy) {
@@ -116,6 +116,13 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
   const filter = {
     ...(bookingStatus && { bookingStatus: handleMultiSelect(bookingStatus) }), // More filter need to be addded
     ...(paymentStatus && { paymentStatus: handleMultiSelect(paymentStatus) }),
+    ...(startDate && // Need to be tested
+      endDate && {
+        bookingDate: {
+          $gte: new Date(req.query.startDate),
+          $lte: new Date(req.query.endDate),
+        },
+      }),
   };
   // Use the pagination utility function
   const { data: bookings, pagination } = await paginate(
